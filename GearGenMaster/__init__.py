@@ -1,5 +1,5 @@
 bl_info = {
-    "name": "GearGen",
+    "name": "GearGenMaster",
     "author": "Sergey Drachev",
     "version": (0, 1, 0),
     "blender": (2, 78, 1),
@@ -21,7 +21,7 @@ import bpy
     #////////////////////////////////////////////////////////////////////////////////     
 def menu_function(self, context):
     
-    self.layout.menu(GearGen.Geargen_add.bl_idname, text="GearGen", icon="SCRIPTWIN")    
+    self.layout.menu(GearGen.Geargen_add.bl_idname, text="GearGenMaster", icon="SCRIPTWIN")    
 
 def register():
     bpy.utils.register_module(__name__)
