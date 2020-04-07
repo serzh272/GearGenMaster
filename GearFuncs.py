@@ -40,7 +40,7 @@ def getTipDiam(module, nTeeth):
 
 
 # Функция для расчета диаметра окружности впадин зубьев
-def getRootDiam(module, nTeeth, c = 0.25):
+def getRootDiam(module, nTeeth, c=0.25):
     return getTipDiam(module, nTeeth) - (4.0+2*c) * module
 
 
@@ -59,15 +59,15 @@ def getVertEvolv(Diam, radAngle):
 
 
 # Функция для расчета пересечения удлиненной эвольвенты впадины зуба и эвольвенты зуба
-def getCrossEvolv(m, nTeeth, prezureAngle, shiftX, typeGear):
+def getCrossEvolv(m, nTeeth, prezureAngle, shiftX, typeGear, c=0.25):
     DiamRef = getRefDiam(m, nTeeth)
     baseDiam = getBaseDiam(m, nTeeth, prezureAngle)
-    if typeGear == 'internal':
-        km = m
-        DiamR = getRootDiam(m, nTeeth) + shiftX * 2 + 0.5 * m
+    km = m
+    DiamR = getRootDiam(m, nTeeth, c) + 2 * shiftX
+    if typeGear == 'internal':        
+        DiamR = DiamR + 2 * c * m
     else:
-        km = 1.25 * m
-        DiamR = getRootDiam(m, nTeeth) + 2 * shiftX
+        km = km + c * m
 
     def getEvolvAngle(Diam):
         u = abs(sqrt(Diam * Diam / (baseDiam * baseDiam) - 1))
@@ -98,7 +98,7 @@ def getCrossEvolv(m, nTeeth, prezureAngle, shiftX, typeGear):
     dD = (DiamRef - xD) / 2
     diamArr = Vector((xD, xD + dD, DiamRef))
     n = 0
-    while abs(getEvolvAngle(diamArr[1])[0] - getEvolvAngle2(diamArr[1])[0]) > m / 1000 or dD > m / 1000:
+    while abs(getEvolvAngle(diamArr[1])[0] - getEvolvAngle2(diamArr[1])[0]) > m / 100 or dD > m / 100:
         dD = dD / 2
         if abs(getEvolvAngle(diamArr[0])[0] - getEvolvAngle2(diamArr[0])[0]) <= abs(
                 getEvolvAngle(diamArr[1])[0] - getEvolvAngle2(diamArr[1])[0]):
@@ -124,8 +124,11 @@ def getCrossEvolv(m, nTeeth, prezureAngle, shiftX, typeGear):
 # Функция для расчета точки начала координат
 def getOriginZ(m, nTeeth, typeGear, shiftX, angCon):
     if typeGear == 'bevel':
-        radRef = getRefDiam(m, nTeeth) / 2 + shiftX
-        zOrig = radRef / tan(angCon)
+        if angCon == 0 or angCon == pi:
+            zOrig = 0.0
+        else:
+            radRef = getRefDiam(m, nTeeth) / 2 + shiftX
+            zOrig = radRef / tan(angCon)
     else:
         zOrig = 0.0
     return zOrig

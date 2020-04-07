@@ -1,8 +1,8 @@
 bl_info = {
     "name": "GearGenMaster",
     "author": "Sergey Drachev",
-    "version": (0, 1, 2),
-    "blender": (2, 79, 1),
+    "version": (0, 1, 3),
+    "blender": (2, 79, 0),
     "location": "View3D > Add > Mesh",
     "description": "Add gears",
     "warning": "",
@@ -15,7 +15,11 @@ if "bpy" in locals():
     importlib.reload(GearGenMaster)
     print("GearGen: Reloaded multifiles")
 else:
-    from GearGenMaster import GearGenMaster
+    import bpy
+    if bpy.app.version >= (2, 80, 0):
+        from . import GearGenMaster
+    else:
+        from . import GearGenMaster_2_79 as GearGenMaster
 
     print("GearGen: Imported multifiles")
 import bpy, os, sys
@@ -25,17 +29,15 @@ def load_icons():
     global custom_icons
     import bpy.utils.previews
     custom_icons = bpy.utils.previews.new()
-    mod = sys.modules["GearGenMaster"]
-    abspath = os.path.abspath(sys.modules["GearGenMaster"].__file__)
-    path = os.path.join(os.path.dirname(abspath), "icons", "gears.png")
+    path = os.path.join(os.path.dirname(__file__), "icons", "gears.png")
     custom_icons.load("geargen_icon", path, 'IMAGE')
-    path = os.path.join(os.path.dirname(abspath), "icons", "spur.png")
+    path = os.path.join(os.path.dirname(__file__), "icons", "spur.png")
     custom_icons.load("spur_icon", path, 'IMAGE')
-    path = os.path.join(os.path.dirname(abspath), "icons", "internal.png")
+    path = os.path.join(os.path.dirname(__file__), "icons", "internal.png")
     custom_icons.load("internal_icon", path, 'IMAGE')
-    path = os.path.join(os.path.dirname(abspath), "icons", "bevel.png")
+    path = os.path.join(os.path.dirname(__file__), "icons", "bevel.png")
     custom_icons.load("bevel_icon", path, 'IMAGE')
-    path = os.path.join(os.path.dirname(abspath), "icons", "worm.png")
+    path = os.path.join(os.path.dirname(__file__), "icons", "worm.png")
     custom_icons.load("worm_icon", path, 'IMAGE')
 
 
@@ -69,17 +71,33 @@ class Geargen_add(bpy.types.Menu):
 def menu_function(self, context):
     global custom_icons
     self.layout.menu(Geargen_add.bl_idname, text="GearGenMaster", icon_value=custom_icons["geargen_icon"].icon_id)
-
+    
+classes = (
+    Geargen_add,
+)
 
 def register():
     load_icons()
-    bpy.utils.register_module(__name__)
-    bpy.types.INFO_MT_mesh_add.append(menu_function)
-
+    if bpy.app.version >= (2, 80, 0):
+        from bpy.utils import register_class
+        for cls in classes:
+            register_class(cls)
+        GearGenMaster.register()
+        bpy.types.VIEW3D_MT_mesh_add.append(menu_function)
+    else:
+        bpy.utils.register_module(__name__)
+        bpy.types.INFO_MT_mesh_add.append(menu_function)
 
 def unregister():
-    bpy.types.INFO_MT_mesh_add.remove(menu_function)
-    bpy.utils.unregister_module(__name__)
+    if bpy.app.version >= (2, 80, 0):
+        bpy.types.VIEW3D_MT_mesh_add.remove(menu_function)
+        GearGenMaster.unregister()
+        from bpy.utils import unregister_class
+        for cls in reversed(classes):
+            unregister_class(cls)
+    else:
+        bpy.types.INFO_MT_mesh_add.remove(menu_function)
+        bpy.utils.unregister_module(__name__)
     global custom_icons
     unload_icons()
 

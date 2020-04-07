@@ -11,64 +11,64 @@ class AddSpurGear(bpy.types.Operator):
     bl_label = "Add_Spur_Gear"
     bl_options = {'REGISTER', 'UNDO'}
 
-    nTeeth : IntProperty(name="Z",
+    nTeeth = IntProperty(name="Z",
                          description="Number of teeth",
                          min=6,
                          max=265,
                          options={'SKIP_SAVE'},
                          default=12)
-    module : FloatProperty(name="Module",
+    module = FloatProperty(name="Module",
                            description="Module of the gear",
                            min=0.05,
                            max=100.0,
                            unit='LENGTH',
                            default=0.2)
-    width : FloatProperty(name="Width, thickness of gear",
+    width = FloatProperty(name="Width, thickness of gear",
                           description="Width of the gear",
                           min=0.1,
                           max=100.0,
                           unit='LENGTH',
                           default=0.5)
-    diam_hole : FloatProperty(name="Hole Diameter",
+    diam_hole = FloatProperty(name="Hole Diameter",
                           description="Diameter of hole",
                           min=0.0,
                           unit='LENGTH',
                           default= 1.0)
-    widthStep : IntProperty(name="Width Step",
+    widthStep = IntProperty(name="Width Step",
                             description="Definition of the width of teeth",
                             min=1,
                             max=30,
                             default=1)
-    skewness : FloatProperty(name="Skewness",
+    skewness = FloatProperty(name="Skewness",
                              description="Skewness of the teeth",
                              min=radians(-90),
                              max=radians(90),
                              options={'SKIP_SAVE'},
                              unit='ROTATION',
                              default=0.0)
-    evolvStep : IntProperty(name="Def. of evolute",
+    evolvStep = IntProperty(name="Def. of evolute",
                             description="Definition of the evolute",
                             min=3,
                             max=30,
                             default=3)
-    filletCurveStep : IntProperty(name="Def. of fillet curve",
+    filletCurveStep = IntProperty(name="Def. of fillet curve",
                                   description="Definition of the fillet curve",
                                   min=3,
                                   max=30,
                                   default=3)
-    tStep : IntProperty(name="Def. of top land",
+    tStep = IntProperty(name="Def. of top land",
                         description="Definition of the top land",
                         min=1,
                         max=30,
                         options={'SKIP_SAVE'},
                         default=3)
-    bStep : IntProperty(name="Def. of bottom land",
+    bStep = IntProperty(name="Def. of bottom land",
                         description="Definition of the bottom land",
                         min=1,
                         max=30,
                         options={'SKIP_SAVE'},
                         default=1)
-    shiftX : FloatProperty(name="ShiftX",
+    shiftX = FloatProperty(name="ShiftX",
                            description="Shift of the profile",
                            min=-4.000,
                            max=4.000,
@@ -77,7 +77,7 @@ class AddSpurGear(bpy.types.Operator):
                            step=0.1,
                            unit='LENGTH',
                            default=0.000)
-    c : FloatProperty(name="C",
+    c = FloatProperty(name="C",
                       description="Tip and Root Clearance",
                       min=0.0,
                       max=1.0,
@@ -86,28 +86,28 @@ class AddSpurGear(bpy.types.Operator):
                       step=0.01,
                       unit='LENGTH',
                       default=0.25)
-    angle : FloatProperty(name="Pressure Angle",
+    angle = FloatProperty(name="Pressure Angle",
                           description="Pressure angle, skewness of tooth tip",
                           min=0.0,
                           max=radians(45.0),
                           unit='ROTATION',
                           default=radians(20.0))
-    rotAng : FloatProperty(name="Rotation Angle",
+    rotAng = FloatProperty(name="Rotation Angle",
                            description="Rotation Angle Of Gear",
                            options={'SKIP_SAVE'},
                            min=0.0,
                            max=radians(360.0),
                            unit='ROTATION',
                            default=radians(0.0))
-    driver : BoolProperty(name="Add Driver",
+    driver = BoolProperty(name="Add Driver",
                           description="Add Driver to Gear",
                           options={'SKIP_SAVE'},
                           default=False)
-    fill_holes : BoolProperty(name="Fill Holes",
+    fill_holes = BoolProperty(name="Fill Holes",
                           description="Fill Holes",
                           options={'SKIP_SAVE'},
                           default=False)
-    tw : FloatProperty(name="Tooth Width",
+    tw = FloatProperty(name="Tooth Width",
                            description="Width of Tooth",
                            min=0.0,
                            max=1.0,
@@ -270,37 +270,37 @@ class AddRack(bpy.types.Operator):
     bl_label = "Add_Spur_Gear"
     bl_options = {'REGISTER', 'UNDO'}
 
-    nTeeth : IntProperty(name="Z",
+    nTeeth = IntProperty(name="Z",
                          description="Number of teeth",
                          min=6,
                          max=265,
                          options={'SKIP_SAVE'},
                          default=12)
-    module : FloatProperty(name="Module",
+    module = FloatProperty(name="Module",
                            description="Module of the gear",
                            min=0.05,
                            max=100.0,
                            unit='LENGTH',
                            default=0.2)
-    width : FloatProperty(name="Width, thickness of gear",
+    width = FloatProperty(name="Width, thickness of gear",
                           description="Width of the gear",
                           min=0.1,
                           max=100.0,
                           unit='LENGTH',
                           default=0.5)
-    widthStep : IntProperty(name="Width Step",
+    widthStep = IntProperty(name="Width Step",
                             description="Definition of the width of teeth",
                             min=1,
                             max=30,
                             default=1)
-    skewness : FloatProperty(name="Skewness",
+    skewness = FloatProperty(name="Skewness",
                              description="Skewness of the teeth",
                              min=radians(-90),
                              max=radians(90),
                              options={'SKIP_SAVE'},
                              unit='LENGTH',
                              default=0.0)
-    shiftX : FloatProperty(name="ShiftX",
+    shiftX = FloatProperty(name="ShiftX",
                            description="Shift of the profile",
                            min=-4.000,
                            max=4.000,
@@ -309,7 +309,7 @@ class AddRack(bpy.types.Operator):
                            step=0.1,
                            unit='LENGTH',
                            default=0.000)
-    c : FloatProperty(name="C",
+    c = FloatProperty(name="C",
                       description="Tip and Root Clearance",
                       min=0.0,
                       max=1.0,
@@ -318,13 +318,13 @@ class AddRack(bpy.types.Operator):
                       step=0.01,
                       unit='LENGTH',
                       default=0.25)
-    angle : FloatProperty(name="Pressure Angle",
+    angle = FloatProperty(name="Pressure Angle",
                           description="Pressure angle, skewness of tooth tip",
                           min=0.0,
                           max=radians(45.0),
                           unit='ROTATION',
                           default=radians(20.0))
-    rotAng : FloatProperty(name="Rotation Angle",
+    rotAng = FloatProperty(name="Rotation Angle",
                            description="Rotation Angle Of Gear",
                            options={'SKIP_SAVE'},
                            min=0.0,
@@ -409,70 +409,70 @@ class AddHerringboneGear(bpy.types.Operator):
     bl_label = "Add_Herringbone_Gear"
     bl_options = {'REGISTER', 'UNDO'}
 
-    nTeeth : IntProperty(name="Z",
+    nTeeth = IntProperty(name="Z",
                          description="Number of teeth",
                          min=6,
                          max=265,
                          options={'SKIP_SAVE'},
                          default=12)
-    module : FloatProperty(name="Module",
+    module = FloatProperty(name="Module",
                            description="Module of the gear",
                            min=0.05,
                            max=100.0,
                            unit='LENGTH',
                            default=0.2)
-    width : FloatProperty(name="Width, thickness of gear",
+    width = FloatProperty(name="Width, thickness of gear",
                           description="Width of the gear",
                           min=0.1,
                           max=100.0,
                           unit='LENGTH',
                           default=0.5)
-    diam_hole : FloatProperty(name="Hole Diameter",
+    diam_hole = FloatProperty(name="Hole Diameter",
                           description="Diameter of hole",
                           min=0.0,
                           unit='LENGTH',
                           default= 1.0)      
-    widthStep : IntProperty(name="Width Step",
+    widthStep = IntProperty(name="Width Step",
                             description="Definition of the width of teeth",
                             min=1,
                             max=30,
                             default=1)
-    skewness : FloatProperty(name="Skewness",
+    skewness = FloatProperty(name="Skewness",
                              description="Skewness of the teeth",
                              min=radians(-90),
                              max=radians(90),
                              options={'SKIP_SAVE'},
                              unit='ROTATION',
                              default=0.0)
-    evolvStep : IntProperty(name="Def. of evolute",
+    evolvStep = IntProperty(name="Def. of evolute",
                             description="Definition of the evolute",
                             min=3,
                             max=30,
                             default=3)
-    filletCurveStep : IntProperty(name="Def. of fillet curve",
+    filletCurveStep = IntProperty(name="Def. of fillet curve",
                                   description="Definition of the fillet curve",
                                   min=3,
                                   max=30,
                                   default=3)
-    nSat : IntProperty(name="Num. of sattelites",
+    nSat = IntProperty(name="Num. of sattelites",
                        description="Number of sattelites",
                        min=1,
                        max=30,
                        options={'SKIP_SAVE'},
                        default=1)
-    tStep : IntProperty(name="Def. of top land",
+    tStep = IntProperty(name="Def. of top land",
                         description="Definition of the top land",
                         options={'SKIP_SAVE'},
                         min=1,
                         max=30,
                         default=3)
-    bStep : IntProperty(name="Def. of bottom land",
+    bStep = IntProperty(name="Def. of bottom land",
                         description="Definition of the bottom land",
                         options={'SKIP_SAVE'},
                         min=1,
                         max=30,
                         default=1)
-    shiftX : FloatProperty(name="ShiftX",
+    shiftX = FloatProperty(name="ShiftX",
                            description="Shift of the profile",
                            min=-4.0,
                            max=4.0,
@@ -480,7 +480,7 @@ class AddHerringboneGear(bpy.types.Operator):
                            options={'SKIP_SAVE'},
                            unit='LENGTH',
                            default=0.0)
-    c : FloatProperty(name="C",
+    c = FloatProperty(name="C",
                       description="Tip and Root Clearance",
                       min=0.0,
                       max=1.0,
@@ -489,32 +489,32 @@ class AddHerringboneGear(bpy.types.Operator):
                       step=0.01,
                       unit='LENGTH',
                       default=0.25)
-    angle : FloatProperty(name="Pressure Angle",
+    angle = FloatProperty(name="Pressure Angle",
                           description="Pressure angle, skewness of tooth tip",
                           min=0.0,
                           max=radians(45.0),
                           unit='ROTATION',
                           default=radians(20.0))
-    rotAng : FloatProperty(name="Rotation Angle",
+    rotAng = FloatProperty(name="Rotation Angle",
                            description="Rotation Angle Of Gear",
                            options={'SKIP_SAVE'},
                            min=0.0,
                            max=radians(360.0),
                            unit='ROTATION',
                            default=radians(0.0))
-    driver : BoolProperty(name="Add Driver",
+    driver = BoolProperty(name="Add Driver",
                           description="Add Driver to Gear",
                           options={'SKIP_SAVE'},
                           default=False)
-    fill_holes : BoolProperty(name="Fill Holes",
+    fill_holes = BoolProperty(name="Fill Holes",
                           description="Fill Holes",
                           options={'SKIP_SAVE'},
                           default=False)
-    is_sat : BoolProperty(name="Is Satellite",
+    is_sat = BoolProperty(name="Is Satellite",
                           description="Satellite of gear",
                           options={'SKIP_SAVE'},
                           default=False)
-    tw: FloatProperty(name="Tooth Width",
+    tw = FloatProperty(name="Tooth Width",
                       description="Width of Tooth",
                       min=0.0,
                       max=1.0,
@@ -684,64 +684,64 @@ class AddInternalGear(bpy.types.Operator):
     bl_label = "Add_Internal_Gear"
     bl_options = {'REGISTER', 'UNDO'}
 
-    nTeeth : IntProperty(name="Z",
+    nTeeth = IntProperty(name="Z",
                          description="Number of teeth",
                          min=18,
                          max=265,
                          options={'SKIP_SAVE'},
                          default=24)
-    module : FloatProperty(name="Module",
+    module = FloatProperty(name="Module",
                            description="Module of the gear",
                            min=0.05,
                            max=100.0,
                            unit='LENGTH',
                            default=0.2)
-    width : FloatProperty(name="Width, thickness of gear",
+    width = FloatProperty(name="Width, thickness of gear",
                           description="Width of the gear",
                           min=0.1,
                           max=100.0,
                           unit='LENGTH',
                           default=0.5)
-    diam_hole : FloatProperty(name="Diameter",
+    diam_hole = FloatProperty(name="Diameter",
                           description="Diameter",
                           min=0.0,
                           unit='LENGTH',
                           default= 1.0)      
-    widthStep : IntProperty(name="Width Step",
+    widthStep = IntProperty(name="Width Step",
                             description="Definition of the width of teeth",
                             min=1,
                             max=30,
                             default=1)
-    skewness : FloatProperty(name="Skewness",
+    skewness = FloatProperty(name="Skewness",
                              description="Skewness of the teeth",
                              min=radians(-90),
                              max=radians(90),
                              options={'SKIP_SAVE'},
                              unit='ROTATION',
                              default=0.0)
-    evolvStep : IntProperty(name="Def. of evolute",
+    evolvStep = IntProperty(name="Def. of evolute",
                             description="Definition of the evolute",
                             min=3,
                             max=30,
                             default=3)
-    filletCurveStep : IntProperty(name="Def. of fillet curve",
+    filletCurveStep = IntProperty(name="Def. of fillet curve",
                                   description="Definition of the fillet curve",
                                   min=3,
                                   max=30,
                                   default=3)
-    tStep : IntProperty(name="Def. of top land",
+    tStep = IntProperty(name="Def. of top land",
                         description="Definition of the top land",
                         options={'SKIP_SAVE'},
                         min=1,
                         max=30,
                         default=1)
-    bStep : IntProperty(name="Def. of bottom land",
+    bStep = IntProperty(name="Def. of bottom land",
                         description="Definition of the bottom land",
                         options={'SKIP_SAVE'},
                         min=1,
                         max=30,
                         default=3)
-    shiftX : FloatProperty(name="ShiftX",
+    shiftX = FloatProperty(name="ShiftX",
                            description="Shift of the profile of pinion",
                            min=-4.0,
                            max=4.0,
@@ -749,7 +749,7 @@ class AddInternalGear(bpy.types.Operator):
                            options={'SKIP_SAVE'},
                            unit='LENGTH',
                            default=0.0)
-    c : FloatProperty(name="C",
+    c = FloatProperty(name="C",
                       description="Tip and Root Clearance",
                       min=0.0,
                       max=1.0,
@@ -758,26 +758,26 @@ class AddInternalGear(bpy.types.Operator):
                       step=0.01,
                       unit='LENGTH',
                       default=0.25)
-    angle : FloatProperty(name="Pressure Angle",
+    angle = FloatProperty(name="Pressure Angle",
                           description="Pressure angle, skewness of tooth tip",
                           min=0.0,
                           max=radians(45.0),
                           unit='ROTATION',
                           default=radians(20.0))
-    rotAng : FloatProperty(name="Rotation Angle",
+    rotAng = FloatProperty(name="Rotation Angle",
                            description="Rotation Angle Of Gear",
                            min=0.0,
                            max=radians(360.0),
                            options={'SKIP_SAVE'},
                            unit='ROTATION',
                            default=radians(0.0))
-    tw: FloatProperty(name="Tooth Width",
+    tw = FloatProperty(name="Tooth Width",
                       description="Width of Tooth",
                       min=0.0,
                       max=1.0,
                       unit='LENGTH',
                       default=1.0)
-    fill_holes : BoolProperty(name="Fill Holes",
+    fill_holes = BoolProperty(name="Fill Holes",
                           description="Fill Holes",
                           options={'SKIP_SAVE'},
                           default=False)
@@ -846,78 +846,78 @@ class AddBevelGear(bpy.types.Operator):
     bl_label = "Add_Bevel_Gears"
     bl_options = {'REGISTER', 'UNDO'}
 
-    nTeeth1 : IntProperty(name="Z1",
+    nTeeth1 = IntProperty(name="Z1",
                           description="Number of teeth on the pinion",
                           min=6,
                           options={'SKIP_SAVE'},
                           default=12)
-    nTeeth2 : IntProperty(name="Z2",
+    nTeeth2 = IntProperty(name="Z2",
                           description="Number of teeth on the gear",
                           min=6,
                           options={'SKIP_SAVE'},
                           default=12)
-    module : FloatProperty(name="Module",
+    module = FloatProperty(name="Module",
                            description="Module of the gear",
                            min=0.05,
                            max=100.0,
                            unit='LENGTH',
                            default=0.2)
-    width : FloatProperty(name="Width, thickness of gear",
+    width = FloatProperty(name="Width, thickness of gear",
                           description="Width of the gear",
                           min=0.1,
                           unit='LENGTH',
                           default=0.5)
-    diam_hole1 : FloatProperty(name="Pinion hole Diameter",
+    diam_hole1 = FloatProperty(name="Pinion hole Diameter",
                           description="Diameter of pinion hole",
                           min=0.0,
                           unit='LENGTH',
                           default= 1.0)
-    diam_hole2 : FloatProperty(name="Gear hole Diameter",
+    diam_hole2 = FloatProperty(name="Gear hole Diameter",
                           description="Diameter of gear hole",
                           min=0.0,
                           unit='LENGTH',
                           default= 1.0)
-    widthStep : IntProperty(name="Width Step",
+    widthStep = IntProperty(name="Width Step",
                             description="Definition of the width of teeth",
                             min=1,
                             default=1)
-    angShaft : FloatProperty(name="Shafts angle",
+    angShaft = FloatProperty(name="Shafts angle",
                              description="Angle between shafts",
                              min=radians(1),
                              max=radians(179),
                              options={'SKIP_SAVE'},
                              unit='ROTATION',
                              default=radians(90))
-    skewness : FloatProperty(name="Skewness",
+    skewness = FloatProperty(name="Skewness",
                              description="Skewness of the teeth",
                              min=radians(-90),
                              max=radians(90),
                              options={'SKIP_SAVE'},
                              unit='ROTATION',
                              default=0.0)
-    evolvStep : IntProperty(name="Def. of evolute",
+    evolvStep = IntProperty(name="Def. of evolute",
                             description="Definition of the evolute",
                             min=3,
                             max=30,
                             default=3)
-    filletCurveStep : IntProperty(name="Def. of fillet curve",
+    filletCurveStep = IntProperty(name="Def. of fillet curve",
                                   description="Definition of the fillet curve",
                                   min=3,
                                   max=30,
                                   default=3)
-    tStep : IntProperty(name="Def. of top land",
+    tStep = IntProperty(name="Def. of top land",
                         description="Definition of the top land",
                         options={'SKIP_SAVE'},
                         min=1,
                         max=30,
                         default=3)
-    bStep : IntProperty(name="Def. of bottom land",
+    bStep = IntProperty(name="Def. of bottom land",
                         description="Definition of the bottom land",
                         options={'SKIP_SAVE'},
                         min=1,
                         max=30,
                         default=1)
-    shiftX1 : FloatProperty(name="ShiftX1",
+    shiftX1 = FloatProperty(name="ShiftX1",
                             description="Shift of the profile of pinion",
                             min=-4.0,
                             max=4.0,
@@ -925,7 +925,7 @@ class AddBevelGear(bpy.types.Operator):
                             options={'SKIP_SAVE'},
                             unit='LENGTH',
                             default=0.0)
-    shiftX2 : FloatProperty(name="ShiftX2",
+    shiftX2 = FloatProperty(name="ShiftX2",
                             description="Shift of the profile of gear",
                             min=-4.0,
                             max=4.0,
@@ -933,36 +933,36 @@ class AddBevelGear(bpy.types.Operator):
                             options={'SKIP_SAVE'},
                             unit='LENGTH',
                             default=0.0)
-    angle : FloatProperty(name="Pressure Angle",
+    angle = FloatProperty(name="Pressure Angle",
                           description="Pressure angle, skewness of tooth tip",
                           min=0.0,
                           max=radians(45.0),
                           unit='ROTATION',
                           default=radians(20.0))
-    rotAng : FloatProperty(name="Rotation Angle",
+    rotAng = FloatProperty(name="Rotation Angle",
                            description="Rotation Angle Of Gear",
                            min=0.0,
                            max=radians(360.0),
                            options={'SKIP_SAVE'},
                            unit='ROTATION',
                            default=radians(0.0))
-    tw1: FloatProperty(name="Tooth Width",
+    tw1 = FloatProperty(name="Tooth Width",
                       description="Width of Tooth",
                       min=0.0,
                       max=1.0,
                       unit='LENGTH',
                       default=1.0)
-    tw2: FloatProperty(name="Tooth Width",
+    tw2 = FloatProperty(name="Tooth Width",
                       description="Width of Tooth",
                       min=0.0,
                       max=1.0,
                       unit='LENGTH',
                       default=1.0)
-    fill_holes : BoolProperty(name="Fill Holes",
+    fill_holes = BoolProperty(name="Fill Holes",
                           description="Fill Holes",
                           options={'SKIP_SAVE'},
                           default=False)
-    # driver : BoolProperty(name="Add Driver",
+    # driver = BoolProperty(name="Add Driver",
     #                      description="Add Driver to Gear",
     #                      options={'SKIP_SAVE'},
     #                      default=False)
@@ -1012,7 +1012,7 @@ class AddBevelGear(bpy.types.Operator):
             angcon1 = pi / 2 - atan((self.nTeeth2 / self.nTeeth1 + cos(self.angShaft)) / sin(self.angShaft))
             angcon2 = pi / 2 - atan((self.nTeeth1 / self.nTeeth2 + cos(self.angShaft)) / sin(self.angShaft))
         origZ = addMesh.GearFuncs.getOriginZ(self.module, self.nTeeth1, 'bevel', self.shiftX1,
-                                             angcon1) + 1.75 * self.module * sin(angcon1) + bpy.context.scene.cursor.location[2]
+                                             angcon1) + 1.75 * self.module * sin(angcon1) + bpy.context.scene.cursor_location[2]
         mesh = addMesh.createGearMesh(typeGear='bevel',
                                       m=self.module,
                                       nTeeth=self.nTeeth1,
@@ -1077,75 +1077,75 @@ class AddWorm(bpy.types.Operator):
     bl_options = {'REGISTER', 'UNDO', 'PRESET'}
     wormTypeList = [('wt_cylindrical', 'Cylindrical', 'Cylindrical worm'),
                     ('wt_globoid_2', 'Globoid 2', 'Globoid worm 2'), ('wt_globoid_1', 'Globoid 1', 'Globoid worm 1')]
-    wType : EnumProperty(name='Worm Type',
+    wType = EnumProperty(name='Worm Type',
                          description='Choose the type of worm',
                          items=wormTypeList, default='wt_globoid_2')
-    nTeeth : IntProperty(name="Z",
+    nTeeth = IntProperty(name="Z",
                          description="Number of teeth",
                          min=48,
                          max=265,
                          default=48)
-    module : FloatProperty(name="Module",
+    module = FloatProperty(name="Module",
                            description="Module of the gear",
                            min=0.05,
                            max=100.0,
                            unit='LENGTH',
                            default=0.2)
-    dWorm : FloatProperty(name="Diameter of worm",
+    dWorm = FloatProperty(name="Diameter of worm",
                           description="Diameter of worm",
                           min=1,
                           max=100.0,
                           unit='LENGTH',
                           default=1)
-    rezWorm : IntProperty(name="rezolution of worm",
+    rezWorm = IntProperty(name="rezolution of worm",
                           description="rezolution of worm",
                           min=16,
                           max=300,
                           default=16)
-    nTWorm : IntProperty(name="nTeeth of worm",
+    nTWorm = IntProperty(name="nTeeth of worm",
                          description="nTeeth of worm",
                          min=2,
                          max=16,
                          default=4)
-    width : FloatProperty(name="Width, thickness of gear",
+    width = FloatProperty(name="Width, thickness of gear",
                           description="Width of the gear",
                           min=0.1,
                           max=100.0,
                           unit='LENGTH',
                           default=1.5)
-    widthStep : IntProperty(name="Width Step",
+    widthStep = IntProperty(name="Width Step",
                             description="Definition of the width of teeth",
                             min=3,
                             max=30,
                             default=3)
-    evolvStep : IntProperty(name="Def. of evolute",
+    evolvStep = IntProperty(name="Def. of evolute",
                             description="Definition of the evolute",
                             min=3,
                             max=30,
                             default=3)
-    filletCurveStep : IntProperty(name="Def. of fillet curve",
+    filletCurveStep = IntProperty(name="Def. of fillet curve",
                                   description="Definition of the fillet curve",
                                   min=3,
                                   max=30,
                                   default=3)
-    tStep : IntProperty(name="Def. of top land",
+    tStep = IntProperty(name="Def. of top land",
                         description="Definition of the top land",
                         min=1,
                         max=30,
                         default=1)
-    bStep : IntProperty(name="Def. of bottom land",
+    bStep = IntProperty(name="Def. of bottom land",
                         description="Definition of the bottom land",
                         min=1,
                         max=30,
                         default=1)
-    shiftX : FloatProperty(name="ShiftX",
+    shiftX = FloatProperty(name="ShiftX",
                            description="Shift of the profile",
                            min=-4.0,
                            max=4.0,
                            step=0.1,
                            unit='LENGTH',
                            default=0.0)
-    c : FloatProperty(name="C",
+    c = FloatProperty(name="C",
                       description="Tip and Root Clearance",
                       min=0.0,
                       max=1.0,
@@ -1154,28 +1154,28 @@ class AddWorm(bpy.types.Operator):
                       step=0.01,
                       unit='LENGTH',
                       default=0.25)
-    angle : FloatProperty(name="Pressure Angle",
+    angle = FloatProperty(name="Pressure Angle",
                           description="Pressure angle, skewness of tooth tip",
                           min=0.0,
                           max=radians(45.0),
                           unit='ROTATION',
                           default=radians(20.0))
-    rotAng : FloatProperty(name="Rotation Angle",
+    rotAng = FloatProperty(name="Rotation Angle",
                            description="Rotation Angle Of Gear",
                            min=0.0,
                            max=radians(360.0),
                            unit='ROTATION',
                            default=radians(0.0))
-    fill_holes : BoolProperty(name="Fill Holes",
+    fill_holes = BoolProperty(name="Fill Holes",
                           description="Fill Holes",
                           options={'SKIP_SAVE'},
                           default=False)
-    diam_hole : FloatProperty(name="Hole Diameter",
+    diam_hole = FloatProperty(name="Hole Diameter",
                           description="Diameter of hole",
                           min=0.0,
                           unit='LENGTH',
                           default= 1.0)
-    driver : BoolProperty(name="Add Driver",
+    driver = BoolProperty(name="Add Driver",
                          description="Add Driver to Gear",
                          options={'SKIP_SAVE'},
                          default=False)
@@ -1283,11 +1283,11 @@ class AddWorm(bpy.types.Operator):
                                        c=self.c,
                                        fill_holes=self.fill_holes,
                                        diamHole=self.diam_hole)
-        bpy.context.scene.cursor.location[0] = ob.location.x - (addMesh.GearFuncs.getTipDiam(self.module, self.nTeeth) + self.dWorm) / 2
+        bpy.context.scene.cursor_location[0] = ob.location.x - (addMesh.GearFuncs.getTipDiam(self.module, self.nTeeth) + self.dWorm) / 2
         base2 = addMesh.GearFuncs.create_mesh_obj(context, mesh2)
         #ob2 = bpy.context.active_object
         ob2 = base2
-        bpy.context.scene.cursor.location[0] = ob.location.x
+        bpy.context.scene.cursor_location[0] = ob.location.x
         #ob2.location.x = ob.location.x - (addMesh.GearFuncs.getTipDiam(self.module, self.nTeeth) + self.dWorm) / 2
         ob2['nTeeth'] = self.nTeeth
         for i in range(self.nTWorm*2 - 2):
@@ -1302,7 +1302,7 @@ class AddWorm(bpy.types.Operator):
             bpy.context.view_layer.objects.active = ob2
             bpy.ops.object.modifier_apply(apply_as='DATA', modifier="myShrinkWrap")
         ob2.rotation_euler.z = 0
-        bpy.ops.object.add(type='EMPTY', location=(-(addMesh.GearFuncs.getTipDiam(self.module, self.nTeeth) + self.dWorm) / 2 + bpy.context.scene.cursor.location[0], bpy.context.scene.cursor.location[1], bpy.context.scene.cursor.location[2]), rotation=(0.0, 0.0, 2*pi/self.nTeeth))
+        bpy.ops.object.add(type='EMPTY', location=(-(addMesh.GearFuncs.getTipDiam(self.module, self.nTeeth) + self.dWorm) / 2 + bpy.context.scene.cursor_location[0], bpy.context.scene.cursor_location[1], bpy.context.scene.cursor_location[2]), rotation=(0.0, 0.0, 2*pi/self.nTeeth))
         emp = bpy.context.active_object
         arr_mod = ob2.modifiers.new(name='myArray', type='ARRAY')
         arr_mod.use_relative_offset = False
@@ -1327,22 +1327,3 @@ class AddWorm(bpy.types.Operator):
             # rotvar.targets[0].data_path = "[\"nTeeth\"]"
         
         return {'FINISHED'}
-
-classes = (
-    AddSpurGear,
-    AddRack,
-    AddHerringboneGear,
-    AddInternalGear,
-    AddBevelGear,
-    AddWorm,
-)
-
-def register():
-    from bpy.utils import register_class
-    for cls in classes:
-        register_class(cls)
-
-def unregister():
-    from bpy.utils import unregister_class
-    for cls in reversed(classes):
-        unregister_class(cls)

@@ -12,16 +12,17 @@ def sqr(num):
     return num * num
 
 
-def get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, val, side):
+def get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, val, side, c=0.25, tw=0.0):
     DiamRef = GearFuncs.getRefDiam(m, nTeeth)
     baseDiam = GearFuncs.getBaseDiam(m, nTeeth, pressureAngle)
     DiamT = GearFuncs.getTipDiam(m, nTeeth) + shiftX * 2
     if typeGear == 'internal':
         km = m
-        maxU = abs(sqrt(sqr(DiamT + 0.5 * m) / (sqr(baseDiam)) - 1))
+        maxU = abs(sqrt(sqr(DiamT + 2 * c * m) / (sqr(baseDiam)) - 1))
         minU = abs((pi * m / 4 + m * tan(pressureAngle)) / (DiamRef / 2))
+        tw = - tw
     else:
-        km = 1.25 * m
+        km = m + c*m
         maxU = abs(sqrt(sqr(DiamT) / (sqr(baseDiam)) - 1))
         minU = abs((pi * m / 4 + km * tan(pressureAngle)) / (DiamRef / 2))
     dX = km - shiftX
@@ -38,24 +39,26 @@ def get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt
         vertEvolv = GearFuncs.getVertEvolv(DiamRef, u2)
         if side == 0:
             v3 = Vector((vertEvolv[0] - l * cos(a1), - vertEvolv[1] - l * sin(a1), 0))
+            v3.rotate(Euler((0.0, 0.0, tw), 'XYZ'))
         else:
             v3 = Vector((vertEvolv[0] - l * cos(a1), vertEvolv[1] + l * sin(a1), 0))
+            v3.rotate(Euler((0.0, 0.0, - tw), 'XYZ'))
     else:
         vertEvolv = GearFuncs.getVertEvolv(baseDiam, 2 * (val - 0.5) * (maxU - uMinEv) + uMinEv)
         if side == 0:
             v3 = Vector((vertEvolv[0], vertEvolv[1], 0))
-            v3.rotate(Euler((0.0, 0.0, -k / 4 - dAng / 2), 'XYZ'))
+            v3.rotate(Euler((0.0, 0.0, -k / 4 - dAng / 2 + tw), 'XYZ'))
         else:
             v3 = Vector((vertEvolv[0], - vertEvolv[1], 0))
-            v3.rotate(Euler((0.0, 0.0, dAng / 2 + k / 4), 'XYZ'))
+            v3.rotate(Euler((0.0, 0.0, dAng / 2 + k / 4 - tw), 'XYZ'))
     return v3
 
 
-def get_point_w_profile(m, nTeeth, dWorm, H, nTWorm, pressureAngle, shiftX, uMinEv, uMinFt, val, side, teeth):
+def get_point_w_profile(m, nTeeth, dWorm, H, nTWorm, pressureAngle, shiftX, uMinEv, uMinFt, val, side, teeth, c=0.25, tw = 0.0):
     vertsEtalon = []
     vertsEtalon2 = []
     DiamT = GearFuncs.getTipDiam(m, nTeeth) + shiftX * 2
-    DiamR = GearFuncs.getRootDiam(m, nTeeth) + shiftX * 2
+    DiamR = GearFuncs.getRootDiam(m, nTeeth, c) + shiftX * 2
     k = 2 * pi / nTeeth
     if H > 0:
         angA = angA2 = 0
@@ -66,9 +69,9 @@ def get_point_w_profile(m, nTeeth, dWorm, H, nTWorm, pressureAngle, shiftX, uMin
     angC = atan(2 * H / (DiamT - DiamR + dWorm))
     radGear = DiamT / 2 + dWorm / 2
     vt = Vector((0, 0, 0))
-    v3 = get_point_profile(m, nTeeth, pressureAngle, 'spur', shiftX, uMinEv, uMinFt, val, 0)
+    v3 = get_point_profile(m, nTeeth, pressureAngle, 'spur', shiftX, uMinEv, uMinFt, val, 0, c, tw)
     v3_2 = get_point_profile(m, nTeeth, pressureAngle, 'spur', shiftX, uMinEv, uMinFt,
-                             val, 1)
+                             val, 1, c, tw)
     v3.rotate(Euler((0.0, 0.0, k / 2), 'XYZ'))
     v3_2.rotate(Euler((0.0, 0.0, k / 2), 'XYZ'))
     v3.rotate(Euler((0.0, 0.0, (angC + 2 * nTWorm * pi - 2 * (teeth + 1) * pi) / nTeeth), 'XYZ'))
@@ -80,9 +83,9 @@ def get_point_w_profile(m, nTeeth, dWorm, H, nTWorm, pressureAngle, shiftX, uMin
     hcon = tan(angC) * (radGear - abs(sqrt((v3[0] + radGear) * (v3[0] + radGear) + v3[1] * v3[1])))
     hcon2 = tan(angC) * (radGear - abs(sqrt((v3_2[0] + radGear) * (v3_2[0] + radGear) + v3_2[1] * v3_2[1])))
     while abs(v3[2] - hcon) > m / 1000 or abs(v3_2[2] - hcon2) > m / 1000:
-        v3 = get_point_profile(m, nTeeth, pressureAngle, 'spur', shiftX, uMinEv, uMinFt, val, 0)
+        v3 = get_point_profile(m, nTeeth, pressureAngle, 'spur', shiftX, uMinEv, uMinFt, val, 0, c, tw)
         v3_2 = get_point_profile(m, nTeeth, pressureAngle, 'spur', shiftX, uMinEv, uMinFt,
-                                 val, 1)
+                                 val, 1, c, tw)
         v3.rotate(Euler((0.0, 0.0, k / 2), 'XYZ'))
         v3_2.rotate(Euler((0.0, 0.0, k / 2), 'XYZ'))
         v3.rotate(Euler((0.0, 0.0, ((angA + angB) / 2 + 2 * nTWorm * pi - 2 * (teeth + 1) * pi) / nTeeth), 'XYZ'))
@@ -110,7 +113,6 @@ def get_point_w_profile(m, nTeeth, dWorm, H, nTWorm, pressureAngle, shiftX, uMin
         angB = angB2 = 0
     vertsEtalon.append(v3)
     vertsEtalon2.append(v3_2)
-
     vt = Vector((vertsEtalon[-1][0], vertsEtalon[-1][1], vertsEtalon[-1][2]))
     vt2 = Vector((vertsEtalon2[0][0], vertsEtalon2[0][1], vertsEtalon2[0][2]))
     vertsEtalon.clear()
@@ -200,7 +202,7 @@ def createRackMesh(m, nTeeth, prezureAngle, width, widthStep, shiftX, skew, name
 
 
 def createWormVerts(wType, m, nTeeth, dWorm, rezWorm, nTWorm, evolvStep, filletCurveStep, pressureAngle,
-                    shiftX, uMinEv, uMinFt, angZ):
+                    shiftX, uMinEv, uMinFt, angZ, c=0.25, tw=0.0):
     verts = []
     DiamRef = GearFuncs.getRefDiam(m, nTeeth)
     DiamT = GearFuncs.getTipDiam(m, nTeeth) + shiftX * 2
@@ -211,7 +213,7 @@ def createWormVerts(wType, m, nTeeth, dWorm, rezWorm, nTWorm, evolvStep, filletC
         for es in reversed(range(evolvStep + 1)):
             for rot in range(-rezWorm * nTWorm, rezWorm * nTWorm + 1):
                 v3 = get_point_profile(m, nTeeth, pressureAngle, 'internal', shiftX, uMinEv, uMinFt,
-                                       0.5 + valEvolv * es, 1)
+                                       0.5 + valEvolv * es, 1, c, tw)
                 v3.rotate(Euler((0.0, 0.0, -k / 2), 'XYZ'))
                 v3.rotate(Euler((0.0, 0.0, rot * k / rezWorm), 'XYZ'))
                 v3[0] = v3[0] - DiamT / 2 - dWorm / 2
@@ -222,7 +224,7 @@ def createWormVerts(wType, m, nTeeth, dWorm, rezWorm, nTWorm, evolvStep, filletC
         for fs in reversed(range(filletCurveStep)):
             for rot in range(-rezWorm * nTWorm, rezWorm * nTWorm + 1):
                 v3 = get_point_profile(m, nTeeth, pressureAngle, 'internal', shiftX, uMinEv, uMinFt, valFlt * fs,
-                                       1)
+                                       1, c, tw)
                 v3.rotate(Euler((0.0, 0.0, -k / 2), 'XYZ'))
                 v3.rotate(Euler((0.0, 0.0, rot * k / rezWorm), 'XYZ'))
                 v3[0] = v3[0] - DiamT / 2 - dWorm / 2
@@ -232,7 +234,7 @@ def createWormVerts(wType, m, nTeeth, dWorm, rezWorm, nTWorm, evolvStep, filletC
         for fs in range(filletCurveStep):
             for rot in range(-rezWorm * nTWorm, rezWorm * nTWorm + 1):
                 v3 = get_point_profile(m, nTeeth, pressureAngle, 'internal', shiftX, uMinEv, uMinFt, valFlt * fs,
-                                       0)
+                                       0, c, tw)
                 v3.rotate(Euler((0.0, 0.0, k / 2), 'XYZ'))
                 v3.rotate(Euler((0.0, 0.0, rot * k / rezWorm), 'XYZ'))
                 v3[0] = v3[0] - DiamT / 2 - dWorm / 2
@@ -243,7 +245,7 @@ def createWormVerts(wType, m, nTeeth, dWorm, rezWorm, nTWorm, evolvStep, filletC
         for es in range(evolvStep + 1):
             for rot in range(-rezWorm * nTWorm, rezWorm * nTWorm + 1):
                 v3 = get_point_profile(m, nTeeth, pressureAngle, 'internal', shiftX, uMinEv, uMinFt,
-                                       0.5 + valEvolv * es, 0)
+                                       0.5 + valEvolv * es, 0, c, tw)
                 v3.rotate(Euler((0.0, 0.0, k / 2), 'XYZ'))
                 v3.rotate(Euler((0.0, 0.0, rot * k / rezWorm), 'XYZ'))
                 v3[0] = v3[0] - DiamT / 2 - dWorm / 2
@@ -312,14 +314,14 @@ def createWormVerts(wType, m, nTeeth, dWorm, rezWorm, nTWorm, evolvStep, filletC
 
 
 def createWormMesh(wType, m, nTeeth, dWorm, rezWorm, nTWorm, evolvStep, filletCurveStep, prezureAngle,
-                   shiftX, angZ=0.0, name="Worm"):
+                   shiftX, angZ=0.0, name="Worm", c=0.25):
     # os.system("cls")
     VEF = ([], [], [])
     if wType == 'wt_globoid_2':
         st = (evolvStep + filletCurveStep) * 2
     else:
         st = 2
-    u = GearFuncs.getCrossEvolv(m, nTeeth, prezureAngle, shiftX, 'internal')
+    u = GearFuncs.getCrossEvolv(m, nTeeth, prezureAngle, shiftX, 'internal', c)
     g1 = createWormVerts(wType, m, nTeeth, dWorm, rezWorm, nTWorm, evolvStep, filletCurveStep,
                          prezureAngle, shiftX, u[0], u[1], angZ)
     VEF[0].extend(g1)
@@ -339,7 +341,7 @@ def createWormMesh(wType, m, nTeeth, dWorm, rezWorm, nTWorm, evolvStep, filletCu
 
 
 def createProfileVerts(m, diamHole, dWorm, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressureAngle,
-                       typeGear, shiftX, angCon, skewAng, uMinEv, uMinFt, angZ, typeLay):
+                       typeGear, shiftX, angCon, skewAng, uMinEv, uMinFt, angZ, typeLay, c=0.25, tw=0.0):
     verts = []
     verts1 = []
     verts1_2 = []
@@ -350,27 +352,40 @@ def createProfileVerts(m, diamHole, dWorm, nTeeth, evolvStep, filletCurveStep, t
     DiamRef = GearFuncs.getRefDiam(m, nTeeth)
     DiamT = GearFuncs.getTipDiam(m, nTeeth) + shiftX * 2
     k = 2 * pi / nTeeth
-    if typeGear == 'internal':
-        DiamR = GearFuncs.getRootDiam(m, nTeeth) + shiftX * 2 + 0.5 * m
+    if typeGear != 'internal':
+        tA = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 1, 0, c).angle(
+            get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 1, 1, c)) / 2
+        DiamR = GearFuncs.getRootDiam(m, nTeeth, c) + shiftX * 2
     else:
-        DiamR = GearFuncs.getRootDiam(m, nTeeth) + shiftX * 2
+        tA = (k - get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 0, 0, c).angle(
+            get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 0, 1, c))) / 2
+        DiamR = GearFuncs.getRootDiam(m, nTeeth, c) + shiftX * 2 + 0.5 * m
+    tw = tA * (1 - tw)   
     rAng = 2 * pi / ((tStep + bStep) * nTeeth)
     dH = 0.0
-    dL = m / 2
+    dL = m
     if typeGear == 'bevel':
         dH = (dL + (DiamRef - DiamR) / 2) * sin(angCon)
     if typeLay != 0:
         if typeGear != 'internal':
             for r in range((tStep + bStep) * nTeeth):
-                v1 = Vector(((diamHole / 2), 0, 0))
-                v1.rotate(Euler((0.0, 0.0, rAng * (r - tStep / 2)), 'XYZ'))
-                v1[2] = - dH
+                if angCon >= pi/2:
+                    if typeGear == 'bevel':
+                        v1 = Vector(((DiamR / 2 - 2*dL), 0, 0))
+                else:
+                    v1 = Vector(((diamHole / 2), 0, 0))
+                v1.rotate(Euler((0.0, 0.0, rAng * (r - tStep / 2)), 'XYZ'))                
+                if angCon >= pi/2:
+                    if typeGear == 'bevel':
+                        v1 = GearFuncs.rotTeeth(DiamRef + 2 * shiftX, v1, angCon)
+                else:
+                    v1[2] = - dH
                 verts1.append(v1)
             for r in range((tStep + bStep) * nTeeth):
                 v1 = Vector(((DiamR / 2 - dL), 0, 0))
                 v1.rotate(Euler((0.0, 0.0, rAng * (r - tStep / 2)), 'XYZ'))
                 if typeGear == 'bevel':
-                    v1 = GearFuncs.rotTeeth(DiamRef + 2 * shiftX, v1, angCon)
+                    v1 = GearFuncs.rotTeeth(DiamRef + 2 * shiftX, v1, angCon)                
                 v1[2] = - dH
                 verts1_2.append(v1)
         else:
@@ -388,29 +403,29 @@ def createProfileVerts(m, diamHole, dWorm, nTeeth, evolvStep, filletCurveStep, t
     valEvolv = 0.5 / evolvStep
     if typeGear != 'internal':
         for fs in range(filletCurveStep):
-            v3 = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, valFlt * fs, 0)
+            v3 = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, valFlt * fs, 0, c, tw)
             verts3.append(v3)
         for es in range(evolvStep + 1):
             v3 = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt,
-                                   0.5 + valEvolv * es, 0)
+                                   0.5 + valEvolv * es, 0, c, tw)
             verts3.append(v3)
-        tAng = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 1, 0).angle(
-            get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 1, 1)) / tStep
+        tAng = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 1, 0, c, tw).angle(
+            get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 1, 1, c, tw)) / tStep
         for ts in range(1, tStep):
             v = Vector((v3[0], v3[1], v3[2]))
             v.rotate(Euler((0.0, 0.0, tAng * ts), 'XYZ'))
             verts3.append(v)
         for es in reversed(range(evolvStep + 1)):
             v3 = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt,
-                                   0.5 + valEvolv * es, 1)
+                                   0.5 + valEvolv * es, 1, c, tw)
             verts3.append(v3)
         for fs in reversed(range(filletCurveStep)):
-            v3 = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, valFlt * fs, 1)
+            v3 = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, valFlt * fs, 1, c, tw)
             verts3.append(v3)
         vb = Vector((verts3[0][0], verts3[0][1], verts3[0][2]))
         vb.rotate(Euler((0.0, 0.0, k), 'XYZ'))
-        bAng = (k - get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 0, 0).angle(
-            get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 0, 1))) / bStep
+        bAng = (k - get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 0, 0, c, tw).angle(
+            get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 0, 1, c, tw))) / bStep
         for bs in range(1, bStep):
             v = Vector((v3[0], v3[1], v3[2]))
             v.rotate(Euler((0.0, 0.0, bAng * bs), 'XYZ'))
@@ -418,36 +433,34 @@ def createProfileVerts(m, diamHole, dWorm, nTeeth, evolvStep, filletCurveStep, t
     else:
         for es in reversed(range(evolvStep + 1)):
             v3 = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt,
-                                   0.5 + valEvolv * es, 1)
+                                   0.5 + valEvolv * es, 1, c, tw)
             verts3.append(v3)
         for fs in reversed(range(filletCurveStep)):
-            v3 = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, valFlt * fs, 1)
+            v3 = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, valFlt * fs, 1, c,tw)
             verts3.append(v3)
         vb = Vector((verts3[0][0], verts3[0][1], verts3[0][2]))
         vb.rotate(Euler((0.0, 0.0, k), 'XYZ'))
-        bAng = (k - get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 0, 0).angle(
-            get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 0, 1))) / bStep
+        bAng = (k - get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 0, 0, c, tw).angle(
+            get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 0, 1, c, tw))) / bStep
         for bs in range(1, bStep):
             v = Vector((v3[0], v3[1], v3[2]))
             v.rotate(Euler((0.0, 0.0, bAng * bs), 'XYZ'))
             verts3.append(v)
         for fs in range(filletCurveStep):
-            v3 = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, valFlt * fs, 0)
+            v3 = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, valFlt * fs, 0, c, tw)
             v3.rotate(Euler((0.0, 0.0, k), 'XYZ'))
             verts3.append(v3)
         for es in range(evolvStep + 1):
             v3 = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt,
-                                   0.5 + valEvolv * es,
-                                   0)
+                                   0.5 + valEvolv * es, 0, c, tw)
             v3.rotate(Euler((0.0, 0.0, k), 'XYZ'))
             verts3.append(v3)
-        tAng = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 1, 0).angle(
-            get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 1, 1)) / tStep
+        tAng = get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 1, 0, c, tw).angle(
+            get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt, 1, 1, c, tw)) / tStep
         for ts in range(1, tStep):
             v = Vector((v3[0], v3[1], v3[2]))
             v.rotate(Euler((0.0, 0.0, tAng * ts), 'XYZ'))
             verts3.append(v)
-
     if typeLay != 0:
         if typeGear != 'internal':
             for st in range(filletCurveStep + evolvStep):
@@ -498,7 +511,7 @@ def createProfileVerts(m, diamHole, dWorm, nTeeth, evolvStep, filletCurveStep, t
         verts.extend(verts3)
         verts.extend(verts2)
         verts.extend(verts1_2)
-        verts.extend(verts1)
+        verts.extend(verts1)    
     for v in verts:
         v.rotate(Euler((0.0, 0.0, angZ + skewAng), 'XYZ'))
 
@@ -506,7 +519,7 @@ def createProfileVerts(m, diamHole, dWorm, nTeeth, evolvStep, filletCurveStep, t
 
 
 def createWormGearVerts(m, diamHole, nTeeth, dWorm, H, nTWorm, evolvStep, filletCurveStep, tStep, bStep, pressureAngle,
-                        shiftX, uMinEv, uMinFt, angZ, typeLay):
+                        shiftX, uMinEv, uMinFt, angZ, typeLay, c=0.25):
     verts = []
     verts1 = []
     verts1_2 = []
@@ -516,7 +529,7 @@ def createWormGearVerts(m, diamHole, nTeeth, dWorm, H, nTWorm, evolvStep, fillet
     vertsTmp2 = []
     vertsTmp = []
     DiamT = GearFuncs.getTipDiam(m, nTeeth) + shiftX * 2
-    DiamR = GearFuncs.getRootDiam(m, nTeeth) + shiftX * 2
+    DiamR = GearFuncs.getRootDiam(m, nTeeth, c) + shiftX * 2
     k = 2 * pi / nTeeth
     angC = atan(2 * H / (DiamT - DiamR + dWorm))
     radGear = DiamT / 2 + dWorm / 2
@@ -558,7 +571,7 @@ def createWormGearVerts(m, diamHole, nTeeth, dWorm, H, nTWorm, evolvStep, fillet
             v1.rotate(Euler((0.0, 0.0, angZ), 'XYZ'))
             verts1.append(Vector((v1[0], v1[1], v1[2])))
         for r in range(tStep + bStep + 1):
-            v1 = Vector(((diamHole / 2 - m + dL), 0, 0))
+            v1 = Vector(((DiamR/2 + shiftX - m + dL), 0, 0))
             v1.rotate(Euler((0.0, 0.0, -ang0 + rAng * (bStep + tStep / 2) + r * rAng), 'XYZ'))
             v1[2] = H
             v1.rotate(Euler((0.0, 0.0, angZ), 'XYZ'))
@@ -608,9 +621,10 @@ def createWormGearVerts(m, diamHole, nTeeth, dWorm, H, nTWorm, evolvStep, fillet
 
 
 def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressureAngle, typeGear, width, widthStep,
-                   shiftX, angCon, skewAng, angZ=0.0, dWorm=0, nTWorm=0, name="GearGen"):
+                   shiftX, angCon, skewAng, angZ=0.0, dWorm=0, nTWorm=0, name="GearGen", c=0.25, tw=0.0, fill_holes = False, diamHole = 0.0):
     # os.system("cls")
     VEF = ([], [], [])
+    fill_verts = []
     if typeGear == 'gl_worm':
         topSt = tStep
         botSt = bStep
@@ -622,8 +636,10 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
         nVerts3 = nVerts3Segm
         nVerts = 4 * nVerts1 + 2 * nVerts2 + nVerts3 * (widthStep + 1)
         HPart = (width / widthStep)
-        diamHole = GearFuncs.getRootDiam(m, nTeeth) + 2 * shiftX
-        u = GearFuncs.getCrossEvolv(m, nTeeth, pressureAngle, shiftX, 'gl_worm')
+        diamHoleMax = GearFuncs.getRootDiam(m, nTeeth, c) + 2 * shiftX
+        if diamHole > diamHoleMax:
+            diamHole = diamHoleMax
+        u = GearFuncs.getCrossEvolv(m, nTeeth, pressureAngle, shiftX, 'gl_worm', c)
         g1 = createWormGearVerts(m, diamHole, nTeeth, dWorm, -width / 2, nTWorm, evolvStep, filletCurveStep, tStep,
                                  bStep, pressureAngle, shiftX, u[0], u[1], angZ, 1)
         VEF[0].extend(g1)
@@ -635,6 +651,9 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
                 g2 = createWormGearVerts(m, diamHole, nTeeth, dWorm, width / 2, nTWorm, evolvStep, filletCurveStep,
                                          tStep, bStep, pressureAngle, shiftX, u[0], u[1], angZ, 2)
             VEF[0].extend(g2)
+        if fill_holes:
+            rAng = 2 * pi / ((tStep + bStep) * nTeeth)
+            # in development
     else:
         if typeGear == 'internal':
             topSt = bStep
@@ -644,7 +663,7 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
             botSt = bStep
         nVerts1 = (botSt + topSt) * nTeeth
         curveStep = filletCurveStep + evolvStep
-        nVerts2Segm = (curveStep) * (topSt - 1)
+        nVerts2Segm = curveStep * (topSt - 1)
         nVerts2 = nVerts2Segm * nTeeth
         nVerts3Segm = (curveStep + 1) * 2 + topSt + botSt - 2
         nVerts3 = nVerts3Segm * nTeeth
@@ -652,8 +671,11 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
         origZ = GearFuncs.getOriginZ(m, nTeeth, typeGear, shiftX, angCon)
         if typeGear == 'bevel':
             ang = angCon
-            if width >= radRef / sin(ang) - m:
-                width = radRef / sin(ang) - m
+            if angCon != 0 and angCon!=pi:
+                if width >= radRef / sin(ang) - m:
+                    width = radRef / sin(ang) - m
+            else:
+                ang = 0
         else:
             ang = 0.0
         if typeGear == 'internal' or typeGear == 'Hbone':
@@ -664,26 +686,30 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
         HPart = (width / widthStep) * cos(ang)
         shiftPart = shiftX * (prBase / radRef) / widthStep
         if typeGear != 'internal':
-            diamHole = GearFuncs.getRootDiam(m * (1 - prBase / radRef), nTeeth) - 2 * m + 2 * shiftX
+            diamHoleMax = GearFuncs.getRootDiam(m * (1 - prBase / radRef), nTeeth, c) - 2 * m + 2 * shiftX
+            if diamHole > diamHoleMax:
+                diamHole = diamHoleMax
         else:
-            diamHole = GearFuncs.getTipDiam(m * (1 - prBase / radRef), nTeeth) + 2 * m + 2 * shiftX
+            diamHoleMax = GearFuncs.getTipDiam(m * (1 - prBase / radRef), nTeeth) + 2 * m + 2 * shiftX
+            if diamHole < diamHoleMax:
+                diamHole = diamHoleMax
         skewPart = skewAng / widthStep
-        u = GearFuncs.getCrossEvolv(m, nTeeth, pressureAngle, shiftX, typeGear)
+        u = GearFuncs.getCrossEvolv(m, nTeeth, pressureAngle, shiftX, typeGear, c)
         ###################################################################################
         if typeGear == 'cyl_worm':
             if width > dWorm:
                 width = dWorm
-            angW = atan(width / (dWorm + GearFuncs.getTipDiam(m, nTeeth) - GearFuncs.getRootDiam(m, nTeeth)))
+            angW = atan(width / (dWorm + GearFuncs.getTipDiam(m, nTeeth) - GearFuncs.getRootDiam(m, nTeeth, c)))
             partAngW = 2 * angW / widthStep
             skW = angW / nTeeth
             skWPart = 2 * skW / widthStep
             g1 = createProfileVerts(m, diamHole, dWorm, nTeeth, evolvStep, filletCurveStep, tStep, bStep,
-                                    pressureAngle, typeGear, shiftX, angW, -skW, u[0], u[1], angZ, 1)
+                                    pressureAngle, typeGear, shiftX, angW, -skW, u[0], u[1], angZ, 1, c, tw)
             for v3 in g1:
                 v3[2] = v3[2] - width / 2
         else:
             g1 = createProfileVerts(m, diamHole, dWorm, nTeeth, evolvStep, filletCurveStep, tStep, bStep,
-                                    pressureAngle, typeGear, shiftX, ang, 0.0, u[0], u[1], angZ, 1)
+                                    pressureAngle, typeGear, shiftX, ang, 0.0, u[0], u[1], angZ, 1, c, tw)
             for v3 in g1:
                 v3[2] = v3[2] - origZ
         VEF[0].extend(g1)
@@ -693,18 +719,18 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
                 if n < widthStep / 2:
                     g2 = createProfileVerts(m - n * mPart, diamHole, dWorm, nTeeth, evolvStep, filletCurveStep,
                                             tStep, bStep, pressureAngle, typeGear, shiftX - n * shiftPart, ang,
-                                            skewPart * n, u[0], u[1], angZ, 0)
+                                            skewPart * n, u[0], u[1], angZ, 0, c, tw)
                 else:
                     if n != widthStep:
                         g2 = createProfileVerts(m - n * mPart, diamHole, dWorm, nTeeth, evolvStep,
                                                 filletCurveStep, tStep, bStep, pressureAngle, typeGear,
                                                 shiftX - n * shiftPart, ang, skewAng - skewPart * n,
-                                                u[0], u[1], angZ, 0)
+                                                u[0], u[1], angZ, 0, c, tw)
                     else:
                         g2 = createProfileVerts(m - n * mPart, diamHole, dWorm, nTeeth, evolvStep,
                                                 filletCurveStep, tStep, bStep, pressureAngle, typeGear,
                                                 shiftX - n * shiftPart, ang, skewAng - skewPart * n,
-                                                u[0], u[1], angZ, 2)
+                                                u[0], u[1], angZ, 2, c, tw)
                 for v3 in g2:
                     v3[2] = v3[2] + HPart * n - origZ
                 VEF[0].extend(g2)
@@ -713,11 +739,11 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
                 if n != widthStep:
                     g2 = createProfileVerts(m - n * mPart, diamHole, dWorm, nTeeth, evolvStep, filletCurveStep,
                                             tStep, bStep, pressureAngle, typeGear, shiftX - n * shiftPart,
-                                            angW - partAngW * n, skWPart * n - skW, u[0], u[1], angZ, 0)
+                                            angW - partAngW * n, skWPart * n - skW, u[0], u[1], angZ, 0, c, tw)
                 else:
                     g2 = createProfileVerts(m - n * mPart, diamHole, dWorm, nTeeth, evolvStep, filletCurveStep,
                                             tStep, bStep, pressureAngle, typeGear, shiftX - n * shiftPart, -angW,
-                                            width / 2, skW, u[0], u[1], angZ, 2)
+                                            width / 2, skW, u[0], u[1], angZ, 2, c, tw)
                     for v3 in g2:
                         v3[2] = v3[2] + width / 2
                 VEF[0].extend(g2)
@@ -726,15 +752,32 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
                 if n != widthStep:
                     g2 = createProfileVerts(m - n * mPart, diamHole, dWorm, nTeeth, evolvStep, filletCurveStep,
                                             tStep, bStep, pressureAngle, typeGear, shiftX - n * shiftPart, ang,
-                                            skewPart * n, u[0], u[1], angZ, 0)
+                                            skewPart * n, u[0], u[1], angZ, 0, c, tw)
                 else:
                     g2 = createProfileVerts(m - n * mPart, diamHole, dWorm, nTeeth, evolvStep, filletCurveStep,
                                             tStep, bStep, pressureAngle, typeGear, shiftX - n * shiftPart, ang,
-                                            skewPart * n, u[0], u[1], angZ, 2)
+                                            skewPart * n, u[0], u[1], angZ, 2, c, tw)
                 for v3 in g2:
                     v3[2] = v3[2] + HPart * n - origZ
                 VEF[0].extend(g2)
-
+        if fill_holes:
+            rAng = 2 * pi / ((tStep + bStep) * nTeeth)
+            if typeGear == 'bevel':
+                width = VEF[0][-1][2] - VEF[0][0][2] 
+                HPart = (width / widthStep)
+            for n in range(1, widthStep):
+                for r in range((tStep + bStep) * nTeeth):            
+                    v1 = Vector(((diamHole / 2), 0, 0))
+                    if typeGear != 'internal':
+                        v1.rotate(Euler((0.0, 0.0, rAng * (r - tStep / 2)), 'XYZ'))
+                    else:
+                        v1.rotate(Euler((0.0, 0.0, rAng * (r + tStep / 2)), 'XYZ'))
+                    if typeGear != 'internal' and typeGear != 'Hbone':
+                        v1.rotate(Euler((0.0, 0.0, skewAng - skewPart*n), 'XYZ'))
+                    v1.rotate(Euler((0.0, 0.0, angZ), 'XYZ'))
+                    v1[2] = width - HPart * n - origZ - 1.75 * m * sin(angCon)
+                    fill_verts.append(v1)
+            VEF[0].extend(fill_verts)
     # building polygons of covers
     if typeGear == 'gl_worm':
         for p in range(nVerts1 - 1):
@@ -1073,6 +1116,43 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
                 VEF[2].append((v1, v4, v3, v2))
             else:
                 VEF[2].append((v1, v2, v3, v4))
+        # building polygons of fill
+        if fill_holes:
+            for w in range(widthStep):
+                if w != widthStep - 1:                
+                    for p in range(nVerts1):
+                        if p != nVerts1 - 1:
+                            v1 = nVerts-nVerts1 + w*nVerts1 + p
+                            v2 = v1+1
+                            v3 = nVerts+1 + w*nVerts1 + p
+                            v4 = v3-1
+                        else:
+                            v1 = nVerts-1 + w*nVerts1
+                            v2 = nVerts-nVerts1 + w*nVerts1
+                            v3 = nVerts + w*nVerts1
+                            v4 = v3 + nVerts1 -1
+                        if typeGear == 'internal':
+                            VEF[2].append((v1, v4, v3, v2))
+                        else:
+                            VEF[2].append((v1, v2, v3, v4))
+                else:
+                    for p in range(nVerts1-1):                    
+                        v1 = nVerts-nVerts1 + w*nVerts1 + p
+                        v2 = v1+1
+                        v3 = 1 + p
+                        v4 = v3-1
+                        if typeGear == 'internal':
+                            VEF[2].append((v1, v4, v3, v2))
+                        else:
+                            VEF[2].append((v1, v2, v3, v4))
+                    v1 = nVerts-1 + w*nVerts1
+                    v2 = nVerts-nVerts1 + w*nVerts1
+                    v3 = 0
+                    v4 = nVerts1-1
+                    if typeGear == 'internal':
+                        VEF[2].append((v1, v4, v3, v2))
+                    else:
+                        VEF[2].append((v1, v2, v3, v4))
 
     mesh = bpy.data.meshes.new(name)
     mesh.from_pydata(VEF[0], VEF[1], VEF[2])
