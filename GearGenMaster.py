@@ -167,9 +167,7 @@ class AddSpurGear(bpy.types.Operator):
                                           tw=self.tw,
                                           fill_holes=self.fill_holes,
                                           diamHole=self.diam_hole)
-            base = addMesh.GearFuncs.create_mesh_obj(context, mesh)
-            matr = np.array([1, 2, 3])
-            print(matr)
+            base = addMesh.GearFuncs.create_mesh_obj(context, mesh)          
             ob = bpy.context.active_object
             ob['type'] = "spur"
             ob['module'] = self.module
