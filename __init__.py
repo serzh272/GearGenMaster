@@ -1,7 +1,7 @@
 bl_info = {
     "name": "GearGenMaster",
     "author": "Sergey Drachev",
-    "version": (0, 1, 5),
+    "version": (0, 1, 6),
     "blender": (2, 80, 0),
     "location": "View3D > Add > Mesh",
     "description": "Add gears",
