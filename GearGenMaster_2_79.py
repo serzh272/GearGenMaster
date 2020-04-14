@@ -147,36 +147,7 @@ class AddSpurGear(bpy.types.Operator):
         col.prop(self, 'driver')
 
     def execute(self, context):
-        if bpy.context.selected_objects == []:
-            mesh = addMesh.createGearMesh(typeGear='spur',
-                                          m=self.module,
-                                          nTeeth=self.nTeeth,
-                                          evolvStep=self.evolvStep,
-                                          filletCurveStep=self.filletCurveStep,
-                                          tStep=self.tStep,
-                                          bStep=self.bStep,
-                                          pressureAngle=self.angle,
-                                          shiftX=self.shiftX,
-                                          width=self.width,
-                                          widthStep=self.widthStep,
-                                          skewAng=self.skewness,
-                                          angCon=0.0,
-                                          angZ=self.rotAng,
-                                          name="SpurGear",
-                                          c=self.c,
-                                          tw=self.tw,
-                                          fill_holes=self.fill_holes,
-                                          diamHole=self.diam_hole)
-            base = addMesh.GearFuncs.create_mesh_obj(context, mesh)
-            ob = bpy.context.active_object
-            ob['type'] = "spur"
-            ob['module'] = self.module
-            ob['nTeeth'] = self.nTeeth
-            ob['dRef'] = addMesh.GearFuncs.getRefDiam(self.module, self.nTeeth) + 2 * self.shiftX
-            ob['skewAng'] = self.skewness
-            ob['rotAng'] = self.rotAng % (2 * pi / self.nTeeth)
-            ob['shiftX'] = self.shiftX
-        else:
+        if bpy.context.selected_objects != []:
             if "type" in bpy.context.selected_objects[0]:
                 if bpy.context.selected_objects.__len__() == 1 and bpy.context.selected_objects[0]['type'] == "spur":
                     ob1 = bpy.context.selected_objects[0]
@@ -261,7 +232,63 @@ class AddSpurGear(bpy.types.Operator):
                 else:
                     self.report({'INFO'}, "Select one spur gear!")
             else:
-                self.report({'INFO'}, "Select object created by GearGenMaster!")
+                mesh = addMesh.createGearMesh(typeGear='spur',
+                                          m=self.module,
+                                          nTeeth=self.nTeeth,
+                                          evolvStep=self.evolvStep,
+                                          filletCurveStep=self.filletCurveStep,
+                                          tStep=self.tStep,
+                                          bStep=self.bStep,
+                                          pressureAngle=self.angle,
+                                          shiftX=self.shiftX,
+                                          width=self.width,
+                                          widthStep=self.widthStep,
+                                          skewAng=self.skewness,
+                                          angCon=0.0,
+                                          angZ=self.rotAng,
+                                          name="SpurGear",
+                                          c=self.c,
+                                          tw=self.tw,
+                                          fill_holes=self.fill_holes,
+                                          diamHole=self.diam_hole)
+                base = addMesh.GearFuncs.create_mesh_obj(context, mesh)          
+                ob = bpy.context.active_object
+                ob['type'] = "spur"
+                ob['module'] = self.module
+                ob['nTeeth'] = self.nTeeth
+                ob['dRef'] = addMesh.GearFuncs.getRefDiam(self.module, self.nTeeth) + 2 * self.shiftX
+                ob['skewAng'] = self.skewness
+                ob['rotAng'] = self.rotAng % (2 * pi / self.nTeeth)
+                ob['shiftX'] = self.shiftX
+        else:
+            mesh = addMesh.createGearMesh(typeGear='spur',
+                                          m=self.module,
+                                          nTeeth=self.nTeeth,
+                                          evolvStep=self.evolvStep,
+                                          filletCurveStep=self.filletCurveStep,
+                                          tStep=self.tStep,
+                                          bStep=self.bStep,
+                                          pressureAngle=self.angle,
+                                          shiftX=self.shiftX,
+                                          width=self.width,
+                                          widthStep=self.widthStep,
+                                          skewAng=self.skewness,
+                                          angCon=0.0,
+                                          angZ=self.rotAng,
+                                          name="SpurGear",
+                                          c=self.c,
+                                          tw=self.tw,
+                                          fill_holes=self.fill_holes,
+                                          diamHole=self.diam_hole)
+            base = addMesh.GearFuncs.create_mesh_obj(context, mesh)          
+            ob = bpy.context.active_object
+            ob['type'] = "spur"
+            ob['module'] = self.module
+            ob['nTeeth'] = self.nTeeth
+            ob['dRef'] = addMesh.GearFuncs.getRefDiam(self.module, self.nTeeth) + 2 * self.shiftX
+            ob['skewAng'] = self.skewness
+            ob['rotAng'] = self.rotAng % (2 * pi / self.nTeeth)
+            ob['shiftX'] = self.shiftX
         return {'FINISHED'}
         # ////////////////////////////////////////////////////////////////////////////////
 
@@ -405,7 +432,22 @@ class AddRack(bpy.types.Operator):
                 else:
                     self.report({'INFO'}, "Select one spur gear!")
             else:
-                self.report({'INFO'}, "Select object created by GearGenMaster!")
+                mesh = addMesh.createRackMesh(m=self.module,
+                                          nTeeth=self.nTeeth,
+                                          prezureAngle=self.angle,
+                                          shiftX=self.shiftX,
+                                          width=self.width,
+                                          widthStep=self.widthStep,
+                                          skew=self.skewness,
+                                          name="Rack")
+                base = addMesh.GearFuncs.create_mesh_obj(context, mesh)
+                ob = bpy.context.active_object
+                ob['type'] = "rack"
+                ob['module'] = self.module
+                ob['nTeeth'] = self.nTeeth
+                ob['skewAng'] = self.skewness
+                ob['rotAng'] = self.rotAng % (2 * pi / self.nTeeth)
+                ob['shiftX'] = self.shiftX
         return {'FINISHED'}
         # ////////////////////////////////////////////////////////////////////////////////
 
@@ -680,7 +722,33 @@ class AddHerringboneGear(bpy.types.Operator):
                     else:
                         self.report({'INFO'}, "Select one herringbone or internal gear!")
             else:
-                self.report({'INFO'}, "Select object created by GearGenMaster!")
+                mesh = addMesh.createGearMesh(typeGear='Hbone',
+                                          m=self.module,
+                                          nTeeth=self.nTeeth,
+                                          evolvStep=self.evolvStep,
+                                          filletCurveStep=self.filletCurveStep,
+                                          tStep=self.tStep,
+                                          bStep=self.bStep,
+                                          pressureAngle=self.angle,
+                                          shiftX=self.shiftX,
+                                          width=self.width,
+                                          widthStep=self.widthStep,
+                                          skewAng=self.skewness,
+                                          angCon=0.0,
+                                          angZ=self.rotAng,
+                                          name="HerringboneGear",
+                                          c=self.c,
+                                          tw=self.tw,
+                                          fill_holes=self.fill_holes,
+                                          diamHole=self.diam_hole)
+                base = addMesh.GearFuncs.create_mesh_obj(context, mesh)
+                ob = bpy.context.active_object
+                ob['type'] = "herringbone"
+                ob['module'] = self.module
+                ob['nTeeth'] = self.nTeeth
+                ob['dRef'] = addMesh.GearFuncs.getRefDiam(self.module, self.nTeeth) + 2 * self.shiftX
+                ob['skewAng'] = self.skewness
+                ob['rotAng'] = self.rotAng % (2 * pi / self.nTeeth)
         return {'FINISHED'}
         # ////////////////////////////////////////////////////////////////////////////////
 
