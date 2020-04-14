@@ -265,9 +265,9 @@ class AddSpurGear(bpy.types.Operator):
 
 
 class AddRack(bpy.types.Operator):
-    """Add a gear mesh"""
+    """Add a rack"""
     bl_idname = "mesh.primitive_rack_add"
-    bl_label = "Add_Spur_Gear"
+    bl_label = "Add a rack"
     bl_options = {'REGISTER', 'UNDO'}
 
     nTeeth = IntProperty(name="Z",
@@ -383,11 +383,12 @@ class AddRack(bpy.types.Operator):
                                                    widthStep=self.widthStep,
                                                    skew=self.skewness,
                                                    name="Rack")
-                    base2 = addMesh._mesh_obj(context, mesh2)
+                    base2 = addMesh.GearFuncs.create_mesh_obj(context, mesh2)
                     ob2 = bpy.context.active_object
                     ob2.location.x = ob1.location[0] + r * cos(self.rotAng)
                     ob2.location.y = ob1.location[1] + r * sin(self.rotAng)
                     ob2.location.z = ob1.location[2]
+                    ob2.rotation_euler.z = rA
                     ob2['type'] = "rack"
                     ob2['module'] = self.module
                     ob2['nTeeth'] = self.nTeeth

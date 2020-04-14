@@ -1,5 +1,7 @@
 import bpy
+import numpy as np
 from builtins import range
+from mathutils import Vector, Euler
 from math import sin, radians, cos, pi, atan
 from bpy.props import IntProperty, FloatProperty, EnumProperty, BoolProperty
 from . import addMesh
@@ -166,6 +168,8 @@ class AddSpurGear(bpy.types.Operator):
                                           fill_holes=self.fill_holes,
                                           diamHole=self.diam_hole)
             base = addMesh.GearFuncs.create_mesh_obj(context, mesh)
+            matr = np.array([1, 2, 3])
+            print(matr)
             ob = bpy.context.active_object
             ob['type'] = "spur"
             ob['module'] = self.module
@@ -265,9 +269,9 @@ class AddSpurGear(bpy.types.Operator):
 
 
 class AddRack(bpy.types.Operator):
-    """Add a gear mesh"""
+    """Add a rack"""
     bl_idname = "mesh.primitive_rack_add"
-    bl_label = "Add_Spur_Gear"
+    bl_label = "Add_Rack"
     bl_options = {'REGISTER', 'UNDO'}
 
     nTeeth : IntProperty(name="Z",
@@ -383,11 +387,16 @@ class AddRack(bpy.types.Operator):
                                                    widthStep=self.widthStep,
                                                    skew=self.skewness,
                                                    name="Rack")
-                    base2 = addMesh._mesh_obj(context, mesh2)
+                    base2 = addMesh.GearFuncs.create_mesh_obj(context, mesh2)
                     ob2 = bpy.context.active_object
-                    ob2.location.x = ob1.location[0] + r * cos(self.rotAng)
-                    ob2.location.y = ob1.location[1] + r * sin(self.rotAng)
-                    ob2.location.z = ob1.location[2]
+                    vec = Vector((r * (cos(self.rotAng) + self.rotAng * sin(self.rotAng)), 
+                                    r * (sin(self.rotAng) - self.rotAng * cos(self.rotAng)), 
+                                    0.0))
+                    vec.rotate(Euler((ob1.rotation_euler.x, ob1.rotation_euler.y, ob1.rotation_euler.z), 'XYZ'))
+                    ob2.location.x = ob1.location[0] + vec[0]
+                    ob2.location.y = ob1.location[1] + vec[1]
+                    ob2.location.z = ob1.location[2] + vec[2]
+                    ob2.rotation_euler.z = self.rotAng
                     ob2['type'] = "rack"
                     ob2['module'] = self.module
                     ob2['nTeeth'] = self.nTeeth
