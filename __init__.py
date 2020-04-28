@@ -72,6 +72,12 @@ def menu_function(self, context):
     global custom_icons
     self.layout.menu(Geargen_add.bl_idname, text="GearGenMaster", icon_value=custom_icons["geargen_icon"].icon_id)
     
+def menu_func_gear(self, context):
+    layout = self.layout
+    layout.separator()
+    oper = layout.operator(GearGenMaster.AddGear.bl_idname, text="GearGenMaster (test)", icon_value=custom_icons["geargen_icon"].icon_id)
+    oper.ggm_change = False
+
 classes = (
     Geargen_add,
 )
@@ -83,6 +89,7 @@ def register():
         for cls in classes:
             register_class(cls)
         GearGenMaster.register()
+        bpy.types.VIEW3D_MT_mesh_add.append(menu_func_gear)
         bpy.types.VIEW3D_MT_mesh_add.append(menu_function)
     else:
         bpy.utils.register_module(__name__)
@@ -90,13 +97,14 @@ def register():
 
 def unregister():
     if bpy.app.version >= (2, 80, 0):
+        bpy.types.VIEW3D_MT_mesh_add.remove(menu_func_gear)
         bpy.types.VIEW3D_MT_mesh_add.remove(menu_function)
         GearGenMaster.unregister()
         from bpy.utils import unregister_class
         for cls in reversed(classes):
             unregister_class(cls)
     else:
-        bpy.types.INFO_MT_mesh_add.remove(menu_function)
+        bpy.types.INFO_MT_mesh_add.remove(menu_function)        
         bpy.utils.unregister_module(__name__)
     global custom_icons
     unload_icons()

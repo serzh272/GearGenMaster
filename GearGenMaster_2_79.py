@@ -154,7 +154,7 @@ class AddSpurGear(bpy.types.Operator):
                     r = (self.module * ob1['nTeeth'] + self.module * self.nTeeth) / 2 + self.shiftX + ob1['shiftX']
                     rA = pi - pi / self.nTeeth + self.rotAng * ob1['nTeeth'] / self.nTeeth + self.rotAng - ob1['rotAng'] * \
                          ob1['nTeeth'] / self.nTeeth
-                    mesh2 = addMesh.createGearMesh(typeGear='spur',
+                    mesh2 = addMesh.createGearMesh(typeGear='ggm_ext_spur',
                                                    m=self.module,
                                                    nTeeth=self.nTeeth,
                                                    evolvStep=self.evolvStep,
@@ -199,7 +199,7 @@ class AddSpurGear(bpy.types.Operator):
                     r = self.module * self.nTeeth / 2 + self.shiftX
                     rA = pi - pi / self.nTeeth + self.rotAng * ob1['nTeeth'] / self.nTeeth + self.rotAng - ob1['rotAng'] * \
                          ob1['nTeeth'] / self.nTeeth
-                    mesh2 = addMesh.createGearMesh(typeGear='spur',
+                    mesh2 = addMesh.createGearMesh(typeGear='ggm_ext_spur',
                                                    m=self.module,
                                                    nTeeth=self.nTeeth,
                                                    evolvStep=self.evolvStep,
@@ -232,7 +232,7 @@ class AddSpurGear(bpy.types.Operator):
                 else:
                     self.report({'INFO'}, "Select one spur gear!")
             else:
-                mesh = addMesh.createGearMesh(typeGear='spur',
+                mesh = addMesh.createGearMesh(typeGear='ggm_ext_spur',
                                           m=self.module,
                                           nTeeth=self.nTeeth,
                                           evolvStep=self.evolvStep,
@@ -261,7 +261,7 @@ class AddSpurGear(bpy.types.Operator):
                 ob['rotAng'] = self.rotAng % (2 * pi / self.nTeeth)
                 ob['shiftX'] = self.shiftX
         else:
-            mesh = addMesh.createGearMesh(typeGear='spur',
+            mesh = addMesh.createGearMesh(typeGear='ggm_ext_spur',
                                           m=self.module,
                                           nTeeth=self.nTeeth,
                                           evolvStep=self.evolvStep,
@@ -607,7 +607,7 @@ class AddHerringboneGear(bpy.types.Operator):
 
     def execute(self, context):
         if not bpy.context.selected_objects:
-            mesh = addMesh.createGearMesh(typeGear='Hbone',
+            mesh = addMesh.createGearMesh(typeGear='ggm_ext_herringbone',
                                           m=self.module,
                                           nTeeth=self.nTeeth,
                                           evolvStep=self.evolvStep,
@@ -644,7 +644,7 @@ class AddHerringboneGear(bpy.types.Operator):
                             rotAng = self.rotAng + nS * (2 * pi / self.nSat)
                             rA = -rotAng * ob1['nTeeth'] / self.nTeeth + rotAng + ob1['rotAng'] * ob1[
                                 'nTeeth'] / self.nTeeth
-                            mesh = addMesh.createGearMesh(typeGear='Hbone',
+                            mesh = addMesh.createGearMesh(typeGear='ggm_ext_herringbone',
                                                           m=self.module,
                                                           nTeeth=self.nTeeth,
                                                           evolvStep=self.evolvStep,
@@ -680,7 +680,7 @@ class AddHerringboneGear(bpy.types.Operator):
                             rotAng = self.rotAng + nS * (2 * pi / self.nSat)
                             rA = pi - pi / self.nTeeth + rotAng * ob1['nTeeth'] / self.nTeeth + rotAng - ob1['rotAng'] * \
                                  ob1['nTeeth'] / self.nTeeth
-                            mesh = addMesh.createGearMesh(typeGear='Hbone',
+                            mesh = addMesh.createGearMesh(typeGear='ggm_ext_herringbone',
                                                           m=self.module,
                                                           nTeeth=self.nTeeth,
                                                           evolvStep=self.evolvStep,
@@ -722,7 +722,7 @@ class AddHerringboneGear(bpy.types.Operator):
                     else:
                         self.report({'INFO'}, "Select one herringbone or internal gear!")
             else:
-                mesh = addMesh.createGearMesh(typeGear='Hbone',
+                mesh = addMesh.createGearMesh(typeGear='ggm_ext_herringbone',
                                           m=self.module,
                                           nTeeth=self.nTeeth,
                                           evolvStep=self.evolvStep,
@@ -1086,9 +1086,9 @@ class AddBevelGear(bpy.types.Operator):
         else:
             angcon1 = pi / 2 - atan((self.nTeeth2 / self.nTeeth1 + cos(self.angShaft)) / sin(self.angShaft))
             angcon2 = pi / 2 - atan((self.nTeeth1 / self.nTeeth2 + cos(self.angShaft)) / sin(self.angShaft))
-        origZ = addMesh.GearFuncs.getOriginZ(self.module, self.nTeeth1, 'bevel', self.shiftX1,
+        origZ = addMesh.GearFuncs.getOriginZ(self.module, self.nTeeth1, 'ggm_ext_bevel', self.shiftX1,
                                              angcon1) + 1.75 * self.module * sin(angcon1) + bpy.context.scene.cursor_location[2]
-        mesh = addMesh.createGearMesh(typeGear='bevel',
+        mesh = addMesh.createGearMesh(typeGear='ggm_ext_bevel',
                                       m=self.module,
                                       nTeeth=self.nTeeth1,
                                       evolvStep=self.evolvStep,
@@ -1115,7 +1115,7 @@ class AddBevelGear(bpy.types.Operator):
         ob1['skewAng'] = self.skewness
         ob1['rotAng'] = self.rotAng % (2 * pi / self.nTeeth1)
         ob1.location.z = origZ
-        mesh2 = addMesh.createGearMesh(typeGear='bevel',
+        mesh2 = addMesh.createGearMesh(typeGear='ggm_ext_bevel',
                                        m=self.module,
                                        nTeeth=self.nTeeth2,
                                        evolvStep=self.evolvStep,
@@ -1338,7 +1338,7 @@ class AddWorm(bpy.types.Operator):
             # ob2.location.x = ob2.location.x + (getTipDiam(self.module, self.nTeeth) + self.dWorm)/2
             # ===================================================================
         #else:
-        mesh2 = addMesh.createGearMesh(typeGear='gl_worm',
+        mesh2 = addMesh.createGearMesh(typeGear='ggm_ext_worm_gear',
                                        m=self.module,
                                        nTeeth=self.nTeeth,
                                        evolvStep=self.evolvStep,
