@@ -156,8 +156,6 @@ class AddGear(bpy.types.Operator):
     ggm_rotAng : FloatProperty(name="Rotation Angle",
                            description="Rotation Angle Of Gear",
                            options={'SKIP_SAVE'},
-                           min=0.0,
-                           max=radians(360.0),
                            unit='ROTATION',
                            default=radians(0.0))
     ggm_angShaft : FloatProperty(name="Shafts angle",
@@ -295,7 +293,11 @@ class AddGear(bpy.types.Operator):
                     self.ggm_isHerringbone = obAct.data["ggm_isHerringbone"]
                     w_matr = obAct.matrix_world
                     if obAct.data["ggm_Type"] == 'ggm_internal':
-                        pass
+                        if self.ggm_Type == 'ggm_external':
+                            if self.ggm_External_Type == 'ggm_ext_spur':
+                                r = (self.ggm_module * self.ggm_nTeeth - self.ggm_module * obAct.data['ggm_nTeeth']) / 2 - self.ggm_shiftX
+                                self.ggm_skewness = obAct.data['ggm_skewness'] * (obAct.data['ggm_nTeeth'] / self.ggm_nTeeth)
+                                world_matr = w_matr @ Matrix.Translation((-r * cos(self.ggm_rotAng), -r * sin(self.ggm_rotAng), 0)) @ Matrix.Rotation(obAct.data['ggm_rotAng'] * obAct.data['ggm_nTeeth'] / self.ggm_nTeeth - self.ggm_rotAng * obAct.data['ggm_nTeeth'] / self.ggm_nTeeth, 4, 'Z')
                     elif obAct.data["ggm_Type"] == 'ggm_external':
                         if obAct.data["ggm_External_Type"] == 'ggm_ext_spur':                            
                             if self.ggm_Type == 'ggm_external':
