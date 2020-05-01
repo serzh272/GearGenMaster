@@ -93,18 +93,20 @@ def register():
         bpy.types.VIEW3D_MT_mesh_add.append(menu_function)
     else:
         bpy.utils.register_module(__name__)
+        bpy.types.INFO_MT_mesh_add.append(menu_func_gear)
         bpy.types.INFO_MT_mesh_add.append(menu_function)
 
 def unregister():
-    if bpy.app.version >= (2, 80, 0):
-        bpy.types.VIEW3D_MT_mesh_add.remove(menu_func_gear)
+    if bpy.app.version >= (2, 80, 0):        
         bpy.types.VIEW3D_MT_mesh_add.remove(menu_function)
+        bpy.types.VIEW3D_MT_mesh_add.remove(menu_func_gear)
         GearGenMaster.unregister()
         from bpy.utils import unregister_class
         for cls in reversed(classes):
             unregister_class(cls)
     else:
-        bpy.types.INFO_MT_mesh_add.remove(menu_function)        
+        bpy.types.INFO_MT_mesh_add.remove(menu_function)
+        bpy.types.INFO_MT_mesh_add.remove(menu_func_gear)
         bpy.utils.unregister_module(__name__)
     global custom_icons
     unload_icons()

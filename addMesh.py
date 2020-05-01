@@ -660,9 +660,9 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
         nVerts3 = nVerts3Segm
         nVerts = 4 * nVerts1 + 2 * nVerts2 + nVerts3 * (widthStep + 1)
         HPart = (width / widthStep)
-        diamHoleMax = GearFuncs.getRootDiam(m, nTeeth, c) + 2 * shiftX
+        """ diamHoleMax = GearFuncs.getRootDiam(m, nTeeth, c) + 2 * shiftX
         if diamHole > diamHoleMax:
-            diamHole = diamHoleMax
+            diamHole = diamHoleMax """
         u = GearFuncs.getCrossEvolv(m, nTeeth, pressureAngle, shiftX, 'ggm_ext_worm_gear', c)
         g1 = createWormGearVerts(m, diamHole, nTeeth, dWorm, -width / 2, nTWorm, evolvStep, filletCurveStep, tStep,
                                  bStep, pressureAngle, shiftX, u[0], u[1], angZ, 1)
@@ -703,7 +703,6 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
                 ang = 0
         else:
             ang = 0.0
-        #if typeGear == 'ggm_internal' or typeGear == 'ggm_ext_herringbone':
         if isHerringbone:
             widthStep = widthStep * 2
         nVerts = 4 * nVerts1 + 2 * nVerts2 + nVerts3 * (widthStep + 1)
@@ -711,14 +710,14 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
         mPart = m * (prBase / radRef) / widthStep
         HPart = (width / widthStep) * cos(ang)
         shiftPart = shiftX * (prBase / radRef) / widthStep
-        if typeGear != 'ggm_internal':
+        """ if typeGear != 'ggm_internal':
             diamHoleMax = GearFuncs.getRootDiam(m * (1 - prBase / radRef), nTeeth, c) - 2 * m + 2 * shiftX
             if diamHole > diamHoleMax:
                 diamHole = diamHoleMax
         else:
             diamHoleMax = GearFuncs.getTipDiam(m * (1 - prBase / radRef), nTeeth) + 2 * m + 2 * shiftX
             if diamHole < diamHoleMax:
-                diamHole = diamHoleMax
+                diamHole = diamHoleMax """
         skewPart = skewAng / widthStep
         u = GearFuncs.getCrossEvolv(m, nTeeth, pressureAngle, shiftX, typeGear, c)
         ###################################################################################

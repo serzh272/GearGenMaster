@@ -1,9 +1,8 @@
 import bpy
-import numpy as np
 from builtins import range
 from mathutils import Vector, Euler, Matrix
 from math import sin, radians, cos, pi, atan
-from bpy.props import IntProperty, FloatProperty, EnumProperty, BoolProperty, PointerProperty
+from bpy.props import IntProperty, FloatProperty, EnumProperty, BoolProperty
 from . import addMesh
 
 GearParameters = [
@@ -32,6 +31,7 @@ GearParameters = [
     "ggm_dWorm",
     "ggm_rezWorm",
     "ggm_nTWorm",
+    "ggm_isHerringbone",
         ]
 
 class AddGear(bpy.types.Operator):
@@ -213,32 +213,34 @@ class AddGear(bpy.types.Operator):
             elif self.ggm_Type == 'ggm_external':
                 col.prop(self, 'ggm_External_Type')
             else:
-                col.prop(self, 'ggm_wType')
-        if self.ggm_External_Type == 'ggm_ext_bevel':
-            split = layout.split()
-            col = split.column()
-            sub = col.column(align=True)
-            sub.label(text="Pinion:")
-            sub.prop(self, 'ggm_nTeeth')
-            col = split.column()
-            sub = col.column(align=True)
-            sub.label(text="Gear:")
-            sub.prop(self, 'ggm_nTeeth2')
-            col = layout.column(align=True)
-        else:
+                col.prop(self, 'ggm_wType')        
+        if self.ggm_Type == 'ggm_external' and self.ggm_External_Type == 'ggm_ext_bevel':
+            if not self.is_pair:
+                split = layout.split()
+                col = split.column()
+                sub = col.column(align=True)
+                sub.label(text="Pinion:")
+                sub.prop(self, 'ggm_nTeeth')
+                col = split.column()
+                sub = col.column(align=True)
+                sub.label(text="Gear:")
+                sub.prop(self, 'ggm_nTeeth2')
+                col = layout.column(align=True)            
+        else:            
             col.prop(self, 'ggm_nTeeth')
         if self.ggm_Type == 'ggm_worm':
             col.prop(self, 'ggm_nTWorm')
         else:
             col.prop(self, 'ggm_tw')
-        col.prop(self, 'ggm_module')
+        if not self.is_pair:
+            col.prop(self, 'ggm_module')
+            col.prop(self, 'ggm_angle')
         col.prop(self, 'ggm_c')
         if self.ggm_Type != 'ggm_worm':
             col.prop(self, 'ggm_width')
             col.prop(self, 'ggm_widthStep')
         else:
-            col.prop(self, 'ggm_dWorm')
-        col.prop(self, 'ggm_angle')
+            col.prop(self, 'ggm_dWorm')        
         col.prop(self, 'ggm_evolvStep')
         col.prop(self, 'ggm_filletCurveStep')
         if self.ggm_Type != 'ggm_worm':
@@ -246,39 +248,47 @@ class AddGear(bpy.types.Operator):
             col.prop(self, 'ggm_bStep')
             col.prop(self, 'ggm_diam_hole')
             col.prop(self, 'ggm_rotAng')
-            col.prop(self, 'ggm_skewness')
-            if self.ggm_External_Type != 'ggm_ext_bevel':
-                col.prop(self, 'ggm_isHerringbone')
+            if not self.is_pair:
+                col.prop(self, 'ggm_skewness')
+            if self.ggm_Type != 'ggm_external' or self.ggm_External_Type != 'ggm_ext_bevel':
+                if not self.is_pair:
+                    col.prop(self, 'ggm_isHerringbone')
         else:
             col.prop(self, 'ggm_rezWorm')
-        if self.ggm_External_Type == 'ggm_ext_bevel':
-            col.prop(self, 'ggm_angShaft')
+        if self.ggm_Type == 'ggm_external' and self.ggm_External_Type == 'ggm_ext_bevel':
+            if not self.is_pair:
+                col.prop(self, 'ggm_angShaft')
 
     @classmethod
     def poll(cls, context):
         return context.scene is not None
 
     def execute(self, context):
-        objLoc = Vector(bpy.context.scene.cursor.location)
-        objRot = Vector((0.0, 0.0, 0.0))
-        rotAng = 0.0
         world_matr = Matrix.Translation(bpy.context.scene.cursor.location)
         rA = 0.0
         self.ggm_angCon = 0.0
+        self.is_pair = False
         if self.ggm_Type == 'ggm_external':
             if self.ggm_External_Type == 'ggm_ext_bevel':
                 if self.ggm_angShaft != 0.0 and self.ggm_angShaft != pi:            
                     self.ggm_angCon = pi / 2 - atan((self.ggm_nTeeth2 / self.ggm_nTeeth + cos(self.ggm_angShaft)) / sin(self.ggm_angShaft))
-                    angCon = pi / 2 - atan((self.ggm_nTeeth / self.ggm_nTeeth2 + cos(self.ggm_angShaft)) / sin(self.ggm_angShaft))
                 world_matr @= Matrix.Translation((0,0,addMesh.GearFuncs.getOriginZ(self.ggm_module, self.ggm_nTeeth, 'ggm_ext_bevel', self.ggm_shiftX,
                                                                                     self.ggm_angCon) + 1.75 * self.ggm_module * sin(self.ggm_angCon)))
-            else:
-                self.ggm_angCon = 0.0
+        prBase = self.ggm_width * sin(self.ggm_angCon)
+        radRef = addMesh.GearFuncs.getRefDiam(self.ggm_module, self.ggm_nTeeth) / 2 + self.ggm_shiftX
+        if self.ggm_Type != 'ggm_internal':
+            diamHoleMax = addMesh.GearFuncs.getRootDiam(self.ggm_module * (1 - prBase / radRef), self.ggm_nTeeth, self.ggm_c) - 2 * self.ggm_module + 2 * self.ggm_shiftX
+            if self.ggm_diam_hole > diamHoleMax:
+                self.ggm_diam_hole = diamHoleMax
+        else:
+            diamHoleMax = addMesh.GearFuncs.getTipDiam(self.ggm_module * (1 - prBase / radRef), self.ggm_nTeeth) + 2 * self.ggm_module + 2 * self.ggm_shiftX
+            if self.ggm_diam_hole < diamHoleMax:
+                self.ggm_diam_hole = diamHoleMax
         if bpy.context.mode == "OBJECT":            
             mesh = addMesh.createMesh(self, context)
             if context.selected_objects != [] and context.active_object and ('ggm_Type' in context.active_object.data.keys()):
                 obAct = context.active_object
-                if (self.ggm_change == True):
+                if (self.ggm_change == True):                    
                     oldmesh = obAct.data
                     oldmeshname = obAct.data.name
                     obAct.data = mesh
@@ -289,12 +299,13 @@ class AddGear(bpy.types.Operator):
                     for prm in GearParameters:
                         if prm in obAct.data:
                             obAct.data[prm] = getattr(self, prm)
-                else:
-                    self.ggm_isHerringbone = obAct.data["ggm_isHerringbone"]
+                else:                    
                     w_matr = obAct.matrix_world
                     if obAct.data["ggm_Type"] == 'ggm_internal':
                         if self.ggm_Type == 'ggm_external':
-                            if self.ggm_External_Type == 'ggm_ext_spur':
+                            if self.ggm_External_Type == 'ggm_ext_spur':                                
+                                self.is_pair = True
+                                self.ggm_isHerringbone = obAct.data["ggm_isHerringbone"]
                                 r = (self.ggm_module * self.ggm_nTeeth - self.ggm_module * obAct.data['ggm_nTeeth']) / 2 - self.ggm_shiftX
                                 self.ggm_skewness = obAct.data['ggm_skewness'] * (obAct.data['ggm_nTeeth'] / self.ggm_nTeeth)
                                 world_matr = w_matr @ Matrix.Translation((-r * cos(self.ggm_rotAng), -r * sin(self.ggm_rotAng), 0)) @ Matrix.Rotation(obAct.data['ggm_rotAng'] * obAct.data['ggm_nTeeth'] / self.ggm_nTeeth - self.ggm_rotAng * obAct.data['ggm_nTeeth'] / self.ggm_nTeeth, 4, 'Z')
@@ -302,24 +313,31 @@ class AddGear(bpy.types.Operator):
                         if obAct.data["ggm_External_Type"] == 'ggm_ext_spur':                            
                             if self.ggm_Type == 'ggm_external':
                                 if self.ggm_External_Type == 'ggm_ext_spur':
+                                    self.is_pair = True
+                                    self.ggm_isHerringbone = obAct.data["ggm_isHerringbone"]
                                     r = (self.ggm_module * obAct.data['ggm_nTeeth'] + self.ggm_module * self.ggm_nTeeth) / 2 + self.ggm_shiftX + obAct.data['ggm_shiftX']
                                     rA = pi - pi / self.ggm_nTeeth + self.ggm_rotAng * obAct.data['ggm_nTeeth'] / self.ggm_nTeeth + self.ggm_rotAng - (obAct.data['ggm_rotAng'])* \
                                         obAct.data['ggm_nTeeth'] / self.ggm_nTeeth
                                     self.ggm_skewness = -obAct.data['ggm_skewness'] * (obAct.data['ggm_nTeeth'] / self.ggm_nTeeth)
                                     world_matr = w_matr @ Matrix.Translation((r * cos(self.ggm_rotAng), r * sin(self.ggm_rotAng), 0)) @ Matrix.Rotation(rA-self.ggm_rotAng, 4, 'Z')
                                 elif self.ggm_External_Type == 'ggm_ext_rack':
+                                    self.is_pair = True
+                                    self.ggm_isHerringbone = obAct.data["ggm_isHerringbone"]
                                     r = self.ggm_module * obAct.data['ggm_nTeeth'] / 2 + obAct.data['ggm_shiftX']
                                     rA = pi - pi / self.ggm_nTeeth + self.ggm_rotAng * obAct.data['ggm_nTeeth'] / self.ggm_nTeeth + self.ggm_rotAng - obAct.data['ggm_rotAng'] * \
                                         obAct.data['ggm_nTeeth'] / self.ggm_nTeeth
                                     self.ggm_skewness = obAct.data['ggm_skewness']*obAct.data["ggm_dRef"]/2
                                     world_matr = w_matr @ Matrix.Translation((r * (cos(self.ggm_rotAng) + self.ggm_rotAng * sin(self.ggm_rotAng)), r * (sin(self.ggm_rotAng) - self.ggm_rotAng * cos(self.ggm_rotAng)), 0)) @ Matrix.Rotation(self.ggm_rotAng, 4, 'Z') @ Matrix.Translation((0, (obAct.data['ggm_rotAng']%(2*pi/obAct.data['ggm_nTeeth']))*obAct.data["ggm_dRef"]/2, 0)) 
                             elif self.ggm_Type == 'ggm_internal':
+                                self.is_pair = True
+                                self.ggm_isHerringbone = obAct.data["ggm_isHerringbone"]
                                 r = (self.ggm_module * self.ggm_nTeeth - self.ggm_module * obAct.data['ggm_nTeeth']) / 2 - self.ggm_shiftX
                                 self.ggm_skewness = obAct.data['ggm_skewness'] * (obAct.data['ggm_nTeeth'] / self.ggm_nTeeth)
                                 world_matr = w_matr @ Matrix.Translation((-r * cos(self.ggm_rotAng), -r * sin(self.ggm_rotAng), 0)) @ Matrix.Rotation(obAct.data['ggm_rotAng'] * obAct.data['ggm_nTeeth'] / self.ggm_nTeeth - self.ggm_rotAng * obAct.data['ggm_nTeeth'] / self.ggm_nTeeth, 4, 'Z')
                         elif obAct.data["ggm_External_Type"] == 'ggm_ext_bevel':
                             if self.ggm_Type == 'ggm_external':
                                 if self.ggm_External_Type == 'ggm_ext_bevel':
+                                    self.is_pair = True
                                     self.ggm_angShaft = obAct.data['ggm_angShaft']
                                     self.ggm_nTeeth = obAct.data['ggm_nTeeth2']
                                     self.ggm_angCon = pi / 2 - atan((obAct.data['ggm_nTeeth'] / self.ggm_nTeeth + cos(self.ggm_angShaft)) / sin(self.ggm_angShaft))
@@ -327,10 +345,9 @@ class AddGear(bpy.types.Operator):
                         elif obAct.data["ggm_External_Type"] == 'ggm_ext_rack':
                             if self.ggm_Type == 'ggm_external':
                                 if self.ggm_External_Type == 'ggm_ext_spur':
+                                    self.is_pair = True
+                                    self.ggm_isHerringbone = obAct.data["ggm_isHerringbone"]
                                     r = self.ggm_module * self.ggm_nTeeth / 2 + self.ggm_shiftX
-                                    #rA = pi - pi / self.nTeeth + self.rotAng * ob1['nTeeth'] / self.nTeeth + self.rotAng - ob1['rotAng'] * \
-                                    #    ob1['nTeeth'] / self.nTeeth
-                                    
                                     world_matr = w_matr @ Matrix.Translation((-r, self.ggm_rotAng*addMesh.GearFuncs.getRefDiam(self.ggm_module, self.ggm_nTeeth)/2, 0)) @ Matrix.Rotation(-self.ggm_rotAng*2, 4, 'Z')
                         else:
                             pass
@@ -338,11 +355,13 @@ class AddGear(bpy.types.Operator):
                         pass
             else:                
                 skewness = self.ggm_skewness
+                self.is_pair = False
             if self.ggm_change != True:
                 mesh = addMesh.createMesh(self, context)
                 base = addMesh.GearFuncs.create_mesh_obj(context, mesh)
                 ob = bpy.context.active_object
                 ob.matrix_world = world_matr
+
                 if self.ggm_driver == True:
                     obDrive = ob.driver_add("rotation_euler", 2)
                     obDrive.driver.type = 'SCRIPTED'
@@ -356,7 +375,7 @@ class AddGear(bpy.types.Operator):
         return {'FINISHED'}
 
     def invoke(self, context, event):
-        self.execute(context)
+        self.execute(context)        
         return {'FINISHED'}
 
 def Gear_contex_menu(self, context):
@@ -366,7 +385,7 @@ def Gear_contex_menu(self, context):
     layout = self.layout
 
     if 'ggm_Type' in ob.data.keys():
-        props = layout.operator("mesh.new_operator", text="Change Gear")
+        props = layout.operator("mesh.new_operator", text="Edit Gear")
         props.ggm_change = True
         for prm in GearParameters:
             if prm in ob.data:
