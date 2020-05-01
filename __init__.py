@@ -75,7 +75,7 @@ def menu_function(self, context):
 def menu_func_gear(self, context):
     layout = self.layout
     layout.separator()
-    oper = layout.operator(GearGenMaster.AddGear.bl_idname, text="GearGenMaster (test)", icon_value=custom_icons["geargen_icon"].icon_id)
+    oper = layout.operator(GearGenMaster.AddGear.bl_idname, text="GearGenMaster (test)", icon_value=custom_icons["spur_icon"].icon_id)
     oper.ggm_change = False
 
 classes = (
