@@ -348,6 +348,7 @@ class AddGear(bpy.types.Operator):
                                 if self.ggm_External_Type == 'ggm_ext_spur':
                                     self.is_pair = True
                                     self.ggm_isHerringbone = obAct.data["ggm_isHerringbone"]
+                                    self.ggm_skewness = 2 * obAct.data['ggm_skewness'] / addMesh.GearFuncs.getRefDiam(self.ggm_module, self.ggm_nTeeth)
                                     r = self.ggm_module * self.ggm_nTeeth / 2 + self.ggm_shiftX
                                     world_matr = w_matr * Matrix.Translation((-r, self.ggm_rotAng*addMesh.GearFuncs.getRefDiam(self.ggm_module, self.ggm_nTeeth)/2, 0)) * Matrix.Rotation(-self.ggm_rotAng*2, 4, 'Z')
                         else:

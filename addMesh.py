@@ -45,6 +45,7 @@ def get_point_profile(m, nTeeth, pressureAngle, typeGear, shiftX, uMinEv, uMinFt
             v3.rotate(Euler((0.0, 0.0, - tw), 'XYZ'))
     else:
         vertEvolv = GearFuncs.getVertEvolv(baseDiam, 2 * (val - 0.5) * (maxU - uMinEv) + uMinEv)
+
         if side == 0:
             v3 = Vector((vertEvolv[0], vertEvolv[1], 0))
             v3.rotate(Euler((0.0, 0.0, -k / 4 - dAng / 2 + tw), 'XYZ'))
@@ -125,7 +126,7 @@ def get_point_w_profile(m, nTeeth, dWorm, H, nTWorm, pressureAngle, shiftX, uMin
 
 def createRackVerts(m, nTeeth, width, prezureAngle, shiftX, H, skew):
     verts = []
-    v = Vector((1.25 * m - shiftX, -1.25 * pi * m + skew, H))
+    v = Vector((1.25 * m - shiftX, -1.25 * pi * m, H))
     verts.append(v)
     for n in range(nTeeth):
         v = Vector((1.25 * m - shiftX, pi * m * (n - 0.75) - (1.25 * m - shiftX) * tan(prezureAngle) + skew, H))
@@ -136,7 +137,7 @@ def createRackVerts(m, nTeeth, width, prezureAngle, shiftX, H, skew):
         verts.append(v)
         v = Vector((1.25 * m - shiftX, pi * m * (n - 0.25) + (1.25 * m - shiftX) * tan(prezureAngle) + skew, H))
         verts.append(v)
-    v = Vector((1.25 * m - shiftX, pi * m * (nTeeth - 0.75) + skew, H))
+    v = Vector((1.25 * m - shiftX, pi * m * (nTeeth - 0.75), H))
     verts.append(v)
     return verts
 
@@ -148,8 +149,9 @@ def createRackMesh(m, nTeeth, prezureAngle, width, widthStep, shiftX, skew, name
     nVerts2 = 4 * nTeeth + 2
     v = Vector(((1.25 * m - shiftX) + m / 2, -1.25 * pi * m, 0))
     VEF[0].append(v)
+    widthStep = 1
     if isHerringbone:
-        widthStep = 2 * widthStep
+        widthStep = 2
     for n in range(nTeeth):
         v = Vector(((1.25 * m - shiftX) + m / 2, pi * m * (n - 0.75) - (1.25 * m - shiftX) * tan(prezureAngle), 0))
         VEF[0].append(v)
@@ -159,18 +161,23 @@ def createRackMesh(m, nTeeth, prezureAngle, width, widthStep, shiftX, skew, name
     VEF[0].append(v)
     g = createRackVerts(m, nTeeth, width, prezureAngle, shiftX, 0, 0)
     VEF[0].extend(g)
-    g2 = createRackVerts(m, nTeeth, width, prezureAngle, shiftX, width, skew)
-    VEF[0].extend(g2)
-    v = Vector(((1.25 * m - shiftX) + m / 2, -1.25 * pi * m + skew, width))
-    VEF[0].append(v)
+    if isHerringbone:
+        g = createRackVerts(m, nTeeth, width, prezureAngle, shiftX, width/2, skew/2)
+        VEF[0].extend(g)
+        g = createRackVerts(m, nTeeth, width, prezureAngle, shiftX, width, 0)
+    else:
+        g = createRackVerts(m, nTeeth, width, prezureAngle, shiftX, width, skew)
+    VEF[0].extend(g)
+    if isHerringbone:
+        skew = 0.0
+    v = Vector(((1.25 * m - shiftX) + m / 2, -1.25 * pi * m, width))
+    VEF[0].append(v)    
     for n in range(nTeeth):
-        v = Vector(
-            ((1.25 * m - shiftX) + m / 2, pi * m * (n - 0.75) - (1.25 * m - shiftX) * tan(prezureAngle) + skew, width))
+        v = Vector(((1.25 * m - shiftX) + m / 2, pi * m * (n - 0.75) - (1.25 * m - shiftX) * tan(prezureAngle) + skew, width))
         VEF[0].append(v)
-        v = Vector(
-            ((1.25 * m - shiftX) + m / 2, pi * m * (n - 0.25) + (1.25 * m - shiftX) * tan(prezureAngle) + skew, width))
+        v = Vector(((1.25 * m - shiftX) + m / 2, pi * m * (n - 0.25) + (1.25 * m - shiftX) * tan(prezureAngle) + skew, width))
         VEF[0].append(v)
-    v = Vector(((1.25 * m - shiftX) + m / 2, pi * m * (nTeeth - 0.75) + skew, width))
+    v = Vector(((1.25 * m - shiftX) + m / 2, pi * m * (nTeeth - 0.75), width))
     VEF[0].append(v)
     v1 = 0
     v2 = 0
@@ -178,24 +185,39 @@ def createRackMesh(m, nTeeth, prezureAngle, width, widthStep, shiftX, skew, name
         v1 = 2 + 2 * f
         v3 = nVerts1 + 4 * f + 1
         VEF[2].append((v1, v1 - 1, v3, v3 + 3))
-        v1 = v1 + nVerts2 * 2 + nVerts1
-        v3 = v3 + nVerts2
-        VEF[2].append((v1, v3 + 3, v3, v1 - 1))
+        v1 += nVerts2 * 2 + nVerts1
+        v3 += nVerts2
+        if isHerringbone:
+            v1 += nVerts2
+            v3 += nVerts2
+        VEF[2].append((v1, v3 + 3, v3, v1 - 1))#
         v1 = nVerts1 + 1 + f * 4
         VEF[2].append((v1, v1 + 1, v1 + 2, v1 + 3))
-        v1 = v1 + nVerts2
-        VEF[2].append((v1, v1 + 3, v1 + 2, v1 + 1))
+        v1 += nVerts2
+        if isHerringbone:
+            v1 += nVerts2
+        VEF[2].append((v1, v1 + 3, v1 + 2, v1 + 1))#
         for fb in range(4):
             v1 = nVerts1 + f * 4 + fb
             v2 = v1 + nVerts2
             VEF[2].append((v1, v2, v2 + 1, v1 + 1))
+            if isHerringbone:
+                v1 += nVerts2
+                v2 += nVerts2
+                VEF[2].append((v1, v2, v2 + 1, v1 + 1))
+    VEF[2].append((v1 + 1, v2 + 1, v2 + 2, v1 + 2))
+    v1 -= nVerts2
+    v2 -= nVerts2
     VEF[2].append((v1 + 1, v2 + 1, v2 + 2, v1 + 2))
     for f in range(nTeeth + 1):
         v1 = 1 + 2 * f
         v3 = nVerts1 + 4 * f
         VEF[2].append((v1, v1 - 1, v3, v3 + 1))
-        v1 = v1 + nVerts2 * 2 + nVerts1
-        v3 = v3 + nVerts2
+        v1 += nVerts2 * 2 + nVerts1
+        v3 += nVerts2
+        if isHerringbone:
+            v1 += nVerts2
+            v3 += nVerts2
         VEF[2].append((v1, v3 + 1, v3, v1 - 1))
     mesh = bpy.data.meshes.new(name)
     mesh.from_pydata(VEF[0], VEF[1], VEF[2])
@@ -1298,7 +1320,8 @@ def createMesh(pr, context):
                             widthStep=pr.ggm_widthStep,
                             shiftX=pr.ggm_shiftX,
                             skew=pr.ggm_skewness,
-                            name=nm)
+                            name=nm,
+                            isHerringbone=pr.ggm_isHerringbone)
         mesh["ggm_External_Type"] = pr.ggm_External_Type
         mesh["ggm_skewness"] = pr.ggm_skewness
         mesh["ggm_width"] = pr.ggm_width
