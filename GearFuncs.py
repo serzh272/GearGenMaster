@@ -64,7 +64,7 @@ def getCrossEvolv(m, nTeeth, prezureAngle, shiftX, typeGear, c=0.25):
     baseDiam = getBaseDiam(m, nTeeth, prezureAngle)
     km = m
     DiamR = getRootDiam(m, nTeeth, c) + 2 * shiftX
-    if typeGear == 'internal':        
+    if typeGear == 'ggm_internal':        
         DiamR = DiamR + 2 * c * m
     else:
         km = km + c * m
@@ -123,7 +123,7 @@ def getCrossEvolv(m, nTeeth, prezureAngle, shiftX, typeGear, c=0.25):
 
 # Функция для расчета точки начала координат
 def getOriginZ(m, nTeeth, typeGear, shiftX, angCon):
-    if typeGear == 'bevel':
+    if typeGear == 'ggm_ext_bevel':
         if angCon == 0 or angCon == pi:
             zOrig = 0.0
         else:
