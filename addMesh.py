@@ -876,15 +876,15 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
             if (p % 2) == 0:
                 if topSt != 1:
                     for pT in range(topSt):
-                        v1 = (1 + p / 2) * nVerts1 + pT
+                        v1 = (1 + p // 2) * nVerts1 + pT
                         v1_2 = v1 + nVerts - 3 * nVerts1
                         if pT == 0 or (pT != 0 and pT != (topSt - 1)):
                             v2 = v1 + 1
                             v2_2 = v1_2 + 1
-                            v3 = nVerts1 * 2 + nVerts2Segm * p / 2 + pT
+                            v3 = nVerts1 * 2 + nVerts2Segm * p // 2 + pT
                             v3_2 = v3 + nVerts2 + nVerts3 * (widthStep + 1)
                             if pT == 0:
-                                v4 = nVerts1 * 2 + nVerts2 + nVerts3Segm * p / 2 + pT
+                                v4 = nVerts1 * 2 + nVerts2 + nVerts3Segm * p // 2 + pT
                                 v4_2 = v4 + nVerts3 * widthStep
                             if pT != 0 and pT != (topSt - 1):
                                 v4 = v3 - 1
@@ -892,18 +892,18 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
                         if pT == (topSt - 1):
                             v2 = v1 + 1
                             v2_2 = v1_2 + 1
-                            v3 = nVerts1 * 2 + nVerts2 + nVerts3Segm * (p / 2 + 1) - botSt - 1
+                            v3 = nVerts1 * 2 + nVerts2 + nVerts3Segm * (p // 2 + 1) - botSt - 1
                             v3_2 = v3 + + nVerts3 * widthStep
-                            v4 = nVerts1 * 2 + nVerts2Segm * p / 2 + pT - 1
+                            v4 = nVerts1 * 2 + nVerts2Segm * p // 2 + pT - 1
                             v4_2 = v4 + nVerts2 + nVerts3 * (widthStep + 1)
                         VEF[2].append((v1, v2, v3, v4))
                         VEF[2].append((v1_2, v4_2, v3_2, v2_2))
                 else:
-                    v1 = nVerts1 + (botSt + 1) * p / 2
+                    v1 = nVerts1 + (botSt + 1) * p // 2
                     v1_2 = v1 + nVerts - 3 * nVerts1
                     v2 = v1 + 1
                     v2_2 = v1_2 + 1
-                    v4 = nVerts1 * 2 + nVerts3Segm * p / 2
+                    v4 = nVerts1 * 2 + nVerts3Segm * p // 2
                     v4_2 = v4 + nVerts3 * widthStep
                     v3 = v4 + nVerts3Segm - botSt - 1
                     v3_2 = v4_2 + nVerts3Segm - botSt - 1
@@ -911,11 +911,11 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
                     VEF[2].append((v1_2, v4_2, v3_2, v2_2))
             else:
                 for pB in range(botSt):
-                    v1 = nVerts1 + topSt + nVerts1 * (p - 1) / 2 + pB
+                    v1 = nVerts1 + topSt + nVerts1 * (p - 1) // 2 + pB
                     v1_2 = v1 + nVerts1 + 2 * nVerts2 + nVerts3 * (widthStep + 1)
-                    v4 = nVerts1 * 2 + nVerts2 + nVerts3Segm * ((p - 1) / 2 + 1) - botSt - 1 + pB
+                    v4 = nVerts1 * 2 + nVerts2 + nVerts3Segm * ((p - 1) // 2 + 1) - botSt - 1 + pB
                     v4_2 = v4 + nVerts3 * widthStep
-                    v2 = nVerts1 + topSt + nVerts1 * (p - 1) / 2 + pB + 1
+                    v2 = nVerts1 + topSt + nVerts1 * (p - 1) // 2 + pB + 1
                     v2_2 = v2 + nVerts - 3 * nVerts1
                     v3 = v4 + 1
                     v3_2 = v4_2 + 1
@@ -1038,15 +1038,15 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
             if (p % 2) == 0:
                 if topSt != 1:
                     for pT in range(topSt):
-                        v1 = (nTeeth + p / 2) * (topSt + botSt) + pT
+                        v1 = (nTeeth + p // 2) * (topSt + botSt) + pT
                         v1_2 = v1 + nVerts - 3 * nVerts1
                         if pT == 0 or (pT != 0 and pT != (topSt - 1)):
                             v2 = v1 + 1
                             v2_2 = v1_2 + 1
-                            v3 = nVerts1 * 2 + nVerts2Segm * p / 2 + pT
+                            v3 = nVerts1 * 2 + nVerts2Segm * p // 2 + pT
                             v3_2 = v3 + nVerts2 + nVerts3 * (widthStep + 1)
                             if pT == 0:
-                                v4 = nVerts1 * 2 + nVerts2 + nVerts3Segm * p / 2 + pT
+                                v4 = nVerts1 * 2 + nVerts2 + nVerts3Segm * p // 2 + pT
                                 v4_2 = v4 + nVerts3 * widthStep
                             if pT != 0 and pT != (topSt - 1):
                                 v4 = v3 - 1
@@ -1054,9 +1054,9 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
                         if pT == (topSt - 1):
                             v2 = v1 + 1
                             v2_2 = v1_2 + 1
-                            v3 = nVerts1 * 2 + nVerts2 + nVerts3Segm * (p / 2 + 1) - botSt
+                            v3 = nVerts1 * 2 + nVerts2 + nVerts3Segm * (p // 2 + 1) - botSt
                             v3_2 = v3 + + nVerts3 * widthStep
-                            v4 = nVerts1 * 2 + nVerts2Segm * p / 2 + pT - 1
+                            v4 = nVerts1 * 2 + nVerts2Segm * p // 2 + pT - 1
                             v4_2 = v4 + nVerts2 + nVerts3 * (widthStep + 1)
                         if typeGear == 'ggm_internal':
                             VEF[2].append((v1, v4, v3, v2))
@@ -1065,11 +1065,11 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
                             VEF[2].append((v1, v2, v3, v4))
                             VEF[2].append((v1_2, v4_2, v3_2, v2_2))
                 else:
-                    v1 = nVerts1 + (botSt + 1) * p / 2
+                    v1 = nVerts1 + (botSt + 1) * p // 2
                     v1_2 = v1 + nVerts - 3 * nVerts1
                     v2 = v1 + 1
                     v2_2 = v1_2 + 1
-                    v4 = nVerts1 * 2 + nVerts3Segm * p / 2
+                    v4 = nVerts1 * 2 + nVerts3Segm * p // 2
                     v4_2 = v4 + nVerts3 * widthStep
                     v3 = v4 + nVerts3Segm - botSt
                     v3_2 = v4_2 + nVerts3Segm - botSt
@@ -1081,12 +1081,12 @@ def createGearMesh(m, nTeeth, evolvStep, filletCurveStep, tStep, bStep, pressure
                         VEF[2].append((v1_2, v4_2, v3_2, v2_2))
             else:
                 for pB in range(botSt):
-                    v1 = nVerts1 + topSt + (topSt + botSt) * (p - 1) / 2 + pB
+                    v1 = nVerts1 + topSt + (topSt + botSt) * (p - 1) // 2 + pB
                     v1_2 = v1 + nVerts1 + 2 * nVerts2 + nVerts3 * (widthStep + 1)
-                    v4 = nVerts1 * 2 + nVerts2 + nVerts3Segm * ((p - 1) / 2 + 1) - botSt + pB
+                    v4 = nVerts1 * 2 + nVerts2 + nVerts3Segm * ((p - 1) // 2 + 1) - botSt + pB
                     v4_2 = v4 + nVerts3 * widthStep
                     if p != (nTeeth * 2 - 1) or pB != (botSt - 1):
-                        v2 = nVerts1 + topSt + (topSt + botSt) * (p - 1) / 2 + pB + 1
+                        v2 = nVerts1 + topSt + (topSt + botSt) * (p - 1) // 2 + pB + 1
                         v2_2 = v2 + nVerts - 3 * nVerts1
                         v3 = v4 + 1
                         v3_2 = v4_2 + 1
